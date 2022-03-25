@@ -1,10 +1,17 @@
 # Abandoned Wordle Algo
 
-Had an idea for wordle. 
-I thought I could combine the best 3-5 letters that would reduce your possible answer set to the smallest size.
+I had set out to create a binary search type of algorithm for choosing wordle letters / words.  
 
-Besides the mess I did not yet refactor, I ran into gotchas at a number of different points, but mostly how to adapt to a shrinking sample size. 
+Ideally I would choose a letter that would split a word set between "includes that letter" : "does not include that letter".
 
-I went down a road of custom logic for different sample sizes that was completely unscientific and turned into tangly spaghetti asap. 
+Then I would choose a letter from each of those data sets to ~equally split those data sets.  
 
-Tested as is, my human brain is smarter than this python script.  Which does not have the ego boosting effect you would hope. 
+That would give me 3 letters I'd prioritize. 
+
+I could also consider the middle-ish letters from those last 4 split sets.
+
+However, I ran into trouble with smaller data sets, and a ton of if conditions to consider. 
+
+So the current route is now to find a word from the remaining words with the best "middleness" score (but not taking into account how each letter could split the word list).
+
+Alongside the middleness score there will also be a positional score to consider. 
