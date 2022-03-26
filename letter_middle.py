@@ -13,15 +13,20 @@ def letters_sorted_by_middleness(word_list: list[str]) -> dict[str, int]:
     return sorted_freq_results
 
 
-def words_sorted_by_middleness(word_list: list[str], remove_dbl_ltrs=True) -> dict[str, int]:
-    letter_scores = letters_sorted_by_middleness(word_list)
+def words_sorted_by_middleness(word_list: list[str], letter_scores=None) -> dict[str, int]:
+    if letter_scores is None:
+        letter_scores = letters_sorted_by_middleness(word_list)
     word_scores = {}
-    if remove_dbl_ltrs:
-        word_list = [word for word in word_list if len(set(word)) == len(word)]
     for word in word_list:
+        if len(set(word)) != len(word):
+            word_scores[word] = 999999
+            continue
         word_scores.setdefault(word, 0)
         for ltr in word:
-            word_scores[word] += letter_scores[ltr]
+            try:
+                word_scores[word] += letter_scores[ltr]
+            except KeyError:
+                word_scores[word] = 9999999
     sorted_word_scores = dict(
         sorted(word_scores.items(), key=lambda w_s: w_s[1]))
     return sorted_word_scores
@@ -29,8 +34,29 @@ def words_sorted_by_middleness(word_list: list[str], remove_dbl_ltrs=True) -> di
 
 if __name__ == '__main__':
     import json
+    import words_filter
 
     with open('answers.json', 'r') as answers_json:
         answers = json.load(answers_json)
 
-    print(words_sorted_by_middleness(answers))
+    with open('playable_words.json', 'r') as playable_words_json:
+        playable_words = json.load(playable_words_json)
+
+    words_left = words_filter.answers_that_meet_criteria(answers)
+
+    letters_to_split_words_list = letters_sorted_by_middleness(words_left)
+
+    playable_guesses = words_sorted_by_middleness(
+        playable_words, letters_to_split_words_list)
+
+    guesses_from_targets = words_sorted_by_middleness(
+        words_left, letters_to_split_words_list)
+
+    print(guesses_from_targets)
+
+    cnt = 0
+    for word, score in playable_guesses.items():
+        print(f'{word} {score}')
+        cnt += 1
+        if cnt > 20:
+            break
