@@ -1,11 +1,11 @@
 import copy
 
 # how to exclude a second appearance of a letter
-excluded_letters = ['a', 't', 'r', 's', 'h', 'u', 'l', 'n', 'd', 'i', 'c', 'k']
+excluded_letters = ['a', 't', 'r', 's', 'h', 'u', 'l', 'n', 'v', 'i', 'c']
 # how to include a second appearance of a letter
-included_letters = ['o', 'e', 'y']
-letters_excluded_from_index = {0: ['o'], 3: ['e']}
-indexed_letters = {4: 'y'}
+included_letters = ['o', 'e']
+letters_excluded_from_index = {0: ['o'], 1: ['e'],  3: ['e'], 4: ['o']}
+indexed_letters = {}
 
 
 def matches_exact_letters(word: str) -> bool:
