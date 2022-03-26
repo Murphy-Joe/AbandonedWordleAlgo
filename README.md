@@ -1,17 +1,39 @@
-# Abandoned Wordle Algo
+# Our first two guesses looked like this:
+<img src="pics/first_two_guesses.jpg" alt="first two guesses" width="400"/>
 
-I had set out to create a binary search type of algorithm for choosing wordle letters / words.  
+`This was a pretty unlucky start, and it doesn't look like we've gotten very far.`
 
-Ideally I would choose a letter that would split a word set between "includes that letter" : "does not include that letter".
+`But with this information alone we've narrowed our possible answer set down from the starting ~2300 words to 10 words. `
 
-Then I would choose a letter from each of those data sets to ~equally split those data sets.  
+## The possible remaining words are
+||||||
+|---|---|---|---|---|
+| voice | movie | biome | decoy | gecko |
+| epoxy | dodge | booze | diode | evoke |
 
-That would give me 3 letters I'd prioritize. 
 
-I could also consider the middle-ish letters from those last 4 split sets.
+`Ideally, we would pick a word from the list that would either`
+1. Be correct
+2. Narrow down the field to one other answer if incorrect
+---
 
-However, I ran into trouble with smaller data sets, and a ton of if conditions to consider. 
+These words are also in order of which guesses will narrow the field the most.  If we choose "voice"
+<img src="pics/third_guess.png" alt="third guess" width="400"/>
 
-So the current route is now to find a word from the remaining words with the best "middleness" score (but not taking into account how each letter could split the word list).
+## Possible remaining words
+||
+|---|
+| epoxy |
+---
+Had we chosen something like 'gecko' we would have got
+<img src="pics/third_alt_guess.png" alt="other third guess" width="400"/> 
 
-Alongside the middleness score there will also be a positional score to consider. 
+## Possible remaining words
+|||||
+|---|---|---|---|
+| epoxy | dodge | booze | 
+
+---
+So the takeaway is given a list of equally likely possibilities, your best guess will be the one that narrows down the field the most.  
+
+*** The caveat that is still being worked out is when to use a word from the answer list (thereby giving a chance of being right) vs using a word from the playable list (thereby giving no chance of being right, but a much better chance of narrowing down the answer set the most)

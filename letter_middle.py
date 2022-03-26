@@ -36,10 +36,10 @@ if __name__ == '__main__':
     import json
     import words_filter
 
-    with open('answers.json', 'r') as answers_json:
+    with open('words/targets.json', 'r') as answers_json:
         answers = json.load(answers_json)
 
-    with open('playable_words.json', 'r') as playable_words_json:
+    with open('words/playable_words.json', 'r') as playable_words_json:
         playable_words = json.load(playable_words_json)
 
     words_left = words_filter.answers_that_meet_criteria(answers)

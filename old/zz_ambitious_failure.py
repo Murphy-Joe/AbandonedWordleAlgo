@@ -140,10 +140,10 @@ def filter_possible_words_with_variable_letters(primary_letter: str, secondary_l
     return filtered_list
 
 
-with open('playable_words.json', 'r') as five_letter_words_json:
+with open('words/playable_words.json', 'r') as five_letter_words_json:
     words = json.load(five_letter_words_json)
 
-with open('answers.json', 'r') as answers_json:
+with open('words/targets.json', 'r') as answers_json:
     answers = json.load(answers_json)
 
 answers_index = game_number()

@@ -1,7 +1,7 @@
 import json
 from pprint import pprint
 
-with open('answers.json', 'r') as answers_json:
+with open('words/targets.json', 'r') as answers_json:
     answers = json.load(answers_json)
 
 idx_results = {}
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     import json
     import letter_count
 
-    with open('answers.json', 'r') as answers_json:
+    with open('words/targets.json', 'r') as answers_json:
         answers = json.load(answers_json)
 
     letters_to_guess = (letter_count.letters_to_guess_for_words_left(answers))

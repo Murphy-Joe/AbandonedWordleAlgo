@@ -38,7 +38,7 @@ def letters_to_guess_for_words_left(words_left: list[str]) -> list[str]:
 if __name__ == '__main__':
     import json
 
-    with open('answers.json', 'r') as answers_json:
+    with open('words/targets.json', 'r') as answers_json:
         answers = json.load(answers_json)
 
     print(letters_to_guess_for_words_left(answers))

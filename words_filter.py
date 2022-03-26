@@ -74,10 +74,10 @@ if __name__ == '__main__':
     import json
     import words_filter
 
-    with open('playable_words.json', 'r') as five_letter_words_json:
+    with open('words/playable_words.json', 'r') as five_letter_words_json:
         playable_words = json.load(five_letter_words_json)
 
-    with open('answers.json', 'r') as answers_json:
+    with open('words/targets.json', 'r') as answers_json:
         answers = json.load(answers_json)
 
     words_to_guess = words_filter.answers_that_meet_criteria(answers)
