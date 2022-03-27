@@ -36,4 +36,9 @@ Had we chosen something like 'gecko' we would have got
 ---
 So the takeaway is given a list of equally likely possibilities, your best guess will be the one that narrows down the field the most.  
 
-*** The caveat that is still being worked out is when to use a word from the answer list (thereby giving a chance of being right) vs using a word from the playable list (thereby giving no chance of being right, but a much better chance of narrowing down the answer set the most)
+*** 3/27 Whether it would be better to use a word from the possible answers list vs a word from the possible guesses list is being addressed on the next update
+
+*Using a word from the possible answers (~2,300) list gives you a chance of winning on the play, but less narrowing if your miss*
+
+*Using a word from the allowable guesses (~13,000) list gives you zero chance of winning on the play but guaranteed to maximally narrow your remaining possibilities* 
+

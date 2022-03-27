@@ -90,6 +90,6 @@ if __name__ == '__main__':
     with open('words/targets.json', 'r') as answers_json:
         answers = json.load(answers_json)
 
-    wf = WordsFilter()
+    wf = WordsFilter('coastlier', 'n', {2: 'n'})
     words_to_guess = wf.answers_that_meet_criteria(answers)
     print(words_to_guess)
