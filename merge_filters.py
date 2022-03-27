@@ -2,31 +2,28 @@ from words_filter import WordsFilter
 
 
 def merge_filters(existing_filter: WordsFilter, new_filter: WordsFilter) -> WordsFilter:
-    merged_filter = WordsFilter([], [], existing_filter.index_excludes_letters)
 
     # exluded letters
-    merged_filter.excluded_letters = existing_filter.excluded_letters + \
-        new_filter.excluded_letters
+    existing_filter.excluded_letters.extend(new_filter.excluded_letters)
 
     # indexed letters
-    merged_filter.indexed_letters = {
-        **existing_filter.indexed_letters, **new_filter.indexed_letters}
+    for k, v in new_filter.indexed_letters.items():
+        existing_filter.indexed_letters.setdefault(k, v)
 
     # index excludes letters
     for idx, letter_list in new_filter.index_excludes_letters.items():
         if idx in existing_filter.index_excludes_letters.keys():
-            merged_filter.index_excludes_letters[idx].extend(letter_list)
+            existing_filter.index_excludes_letters[idx].extend(letter_list)
         else:
-            merged_filter.index_excludes_letters[idx] = letter_list
+            existing_filter.index_excludes_letters[idx] = letter_list
 
     # included letters
     for letter in new_filter.included_letters:
         if letter in existing_filter.included_letters:
             existing_filter.included_letters.remove(letter)
-    merged_filter.included_letters = new_filter.included_letters + \
-        existing_filter.included_letters
+    existing_filter.included_letters.extend(new_filter.included_letters)
 
-    return merged_filter
+    return existing_filter
 
 
 if __name__ == '__main__':
