@@ -1,4 +1,5 @@
 from __future__ import annotations
+from copy import copy
 
 
 class WordsFilter:
@@ -14,12 +15,13 @@ class WordsFilter:
 
     @staticmethod
     def get_new_filter(guess: str, target: str) -> WordsFilter:
+        target_copy = copy(target)
         excluded_letters = set()
         included_letters = []
         index_excludes_letters, indexed_letters = {}, {}
 
         for i, letter in enumerate(guess):
-            if target == letter:
+            if target_copy[i] == letter:
                 indexed_letters[i] = letter
             elif letter in target:
                 target = target.replace(letter, '', 1)

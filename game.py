@@ -25,22 +25,12 @@ class WordleGame:
         answers_idx = time_delta.days
         return answers_idx
 
-    def get_random_target(self) -> str:
-        return random.choice(self.AllTargets)
-
-    def set_random_target(self) -> str:
-        self.Target = self.get_random_target()
-        return self.Target
-
-    def solved(self) -> bool:
-        return self.Guesses[-1] == self.Target
-
     def merge_with_current_game_filter(self, new_filter: WordsFilter) -> WordsFilter:
         return WordsFilter.merge_filters(self.ResultsFilter, new_filter)
 
     def make_guess(self, guess: str) -> WordsFilter:
         self.Guesses.append(guess)
-        if self.solved():
+        if self.Guesses[-1] == self.Target:
             self.end()
         new_filter = WordsFilter.get_new_filter(guess, self.Target)
         merged_filter = WordsFilter.merge_filters(
