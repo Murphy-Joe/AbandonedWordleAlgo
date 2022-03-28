@@ -7,12 +7,11 @@ from words_filter import WordsFilter
 
 class WordleGame:
     def __init__(self, target: str = None):
-        self.all_targets = self.get_targets()
-        self.target = target if target else self.all_targets[self.get_todays_target(
+        self.all_targets: list[str] = self.get_targets()
+        self.target: str = target if target else self.all_targets[self.get_todays_target(
         )]
         self.results_filter = WordsFilter()
-        self.guess_idx = 0
-        self.solved = self.solved_check()
+        self.guesses: list[str] = []
 
     def get_targets(self) -> list[str]:
         with open('words/targets.json', 'r') as targets_json:
@@ -33,14 +32,17 @@ class WordleGame:
         self.target = self.get_random_target()
         return self.target
 
-    def solved_check(self) -> bool:
-        return len(self.results_filter.indexed_letters) >= 5 or self.guess_idx >= 6
+    def solved(self) -> bool:
+        return self.guesses[-1] == self.target
 
     def update_results_filter(self, new_filter: WordsFilter) -> WordsFilter:
         self.results_filter.update_filter(new_filter)
         return self.results_filter
 
     def make_guess(self, guess: str) -> WordsFilter:
+        self.guesses.append(guess)
+        if self.solved():
+            self.end()
         excluded_letters, included_letters = [], []
         index_excludes_letters, indexed_letters = {}, {}
 
