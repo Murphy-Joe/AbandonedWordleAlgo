@@ -35,29 +35,33 @@ class WordsFilter:
 
     @staticmethod
     def merge_filters(existing_filter: WordsFilter, new_filter: WordsFilter) -> WordsFilter:
-
+        merged_filter = WordsFilter()
         # exluded letters
-        existing_filter.ExcludedLetters.update(new_filter.ExcludedLetters)
+        merged_filter.ExcludedLetters = existing_filter.ExcludedLetters.union(
+            new_filter.ExcludedLetters)
 
         # indexed letters
+        merged_filter.IndexedLetters = existing_filter.IndexedLetters.copy()
         for k, v in new_filter.IndexedLetters.items():
-            existing_filter.IndexedLetters.setdefault(k, v)
+            merged_filter.IndexedLetters.setdefault(k, v)
 
         # index excludes letters
+        merged_filter.IndexExcludesLetters = existing_filter.IndexExcludesLetters.copy()
         for idx, letter_list in new_filter.IndexExcludesLetters.items():
-            if idx in existing_filter.IndexExcludesLetters.keys() \
-                    and letter_list[0] not in existing_filter.IndexExcludesLetters[idx]:
-                existing_filter.IndexExcludesLetters[idx].extend(letter_list)
+            if idx in merged_filter.IndexExcludesLetters.keys() \
+                    and letter_list[0] not in merged_filter.IndexExcludesLetters[idx]:
+                merged_filter.IndexExcludesLetters[idx].extend(letter_list)
             else:
-                existing_filter.IndexExcludesLetters[idx] = letter_list
+                merged_filter.IndexExcludesLetters[idx] = letter_list
 
         # included letters
+        merged_filter.IncludedLetters = existing_filter.IncludedLetters.copy()
         for letter in new_filter.IncludedLetters:
-            if letter in existing_filter.IncludedLetters:
-                existing_filter.IncludedLetters.remove(letter)
-        existing_filter.IncludedLetters.extend(new_filter.IncludedLetters)
+            if letter in merged_filter.IncludedLetters:
+                merged_filter.IncludedLetters.remove(letter)
+        merged_filter.IncludedLetters.extend(new_filter.IncludedLetters)
 
-        return existing_filter
+        return merged_filter
 
 
 if __name__ == '__main__':

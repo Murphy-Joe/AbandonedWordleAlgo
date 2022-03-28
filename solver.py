@@ -1,7 +1,12 @@
+from time import time
 from game import WordleGame
 from copy import deepcopy
 from words_filter import WordsFilter
 import json
+from concurrent.futures import ThreadPoolExecutor
+
+with open('words/playable_words.json', 'r') as playable_words:
+    guess_words_global = json.load(playable_words)
 
 
 class Solver():
@@ -96,21 +101,64 @@ class Solver():
                 return_dict[guess] += score
         return return_dict
 
+    def narrowing_score_per_word_multi_threaded(self, guess: str) -> dict[str, int]:
+        return_dict = {}
+        targets = self.answers_that_meet_criteria(self.Game.ResultsFilter)
+        for tgt in targets:
+            return_dict.setdefault(guess, 0)
+            score = self.narrowing_score(tgt, guess) if guess != tgt else 0
+            return_dict[guess] += score
+        return return_dict
+
+    def narrow_multi_thread_per_target(self, target: str) -> dict[str, int]:
+        return_dict = {}
+        for guess in guess_words_global:
+            return_dict.setdefault(guess, 0)
+            score = self.narrowing_score(
+                target, guess) if guess != target else 0
+            return_dict[guess] += score
+        return return_dict
+
 
 if __name__ == '__main__':
     with open('words/playable_words.json', 'r') as playable_words:
         guess_words = json.load(playable_words)
 
-    wg = WordleGame('sunny')
+    """ wg = WordleGame('sunny')
     print(wg.Target)
     wg.make_guess('audio')
     print(wg.ResultsFilter.__dict__)
     wg.make_guess('noork')
     print(wg.ResultsFilter.__dict__)
-
     solver = Solver(wg)
     words_left = solver.answers_that_meet_criteria(wg.ResultsFilter)
-    print(words_left)
-    print(solver.letters_left(words_left))
-    print(len(solver.narrow_guesses_from_words_left(words_left)))
+    print(words_left) """
+
+    wg = WordleGame()
+    solver = Solver(wg)
+    s = time()
+    with ThreadPoolExecutor(max_workers=100) as exe:
+        result = exe.map(
+            solver.narrowing_score_per_word_multi_threaded, guess_words[:3])
+
+    combined_results = {}
+    for r in result:
+        combined_results.update(r)
+
+    combined_results = solver.narrowing_score_per_word(guess_words[:3])
+
+    sorted_results = dict(
+        sorted(combined_results.items(), key=lambda kv: kv[1]))
+    cnt = 0
+    for k, v in sorted_results.items():
+        print(f'{k} : {v}')
+        cnt += 1
+        if cnt > 20:
+            break
+
+    c = time()
+    print(f'thread map: {c - s}')
+
+    # print(solver.letters_left(words_left))
+    # print(len(solver.narrow_guesses_from_words_left(words_left)))
     # print(solver.narrowing_score_per_word(guess_words[2000:2050]))
