@@ -1,14 +1,11 @@
-class WordsFilter:
-    excluded_letters = []
-    included_letters = []
-    index_excludes_letters = {}
-    indexed_letters = {}
+from __future__ import annotations
 
-# create a constructor for the class
-    def __init__(self, excluded_letters=[], included_letters=[], letters_excluded_from_index={}, indexed_letters={}):
+
+class WordsFilter:
+    def __init__(self, excluded_letters=[], included_letters=[], index_excludes_letters={}, indexed_letters={}):
         self.excluded_letters = excluded_letters
         self.included_letters = included_letters
-        self.index_excludes_letters = letters_excluded_from_index
+        self.index_excludes_letters = index_excludes_letters
         self.indexed_letters = indexed_letters
 
     def matches_exact_letters(self, word: str) -> bool:
@@ -61,24 +58,30 @@ class WordsFilter:
             possible_answers.append(word)
         return possible_answers
 
+    def update_filter(self, new_filter: WordsFilter) -> WordsFilter:
 
-def merge_filters(existing_filter: WordsFilter, new_filter: WordsFilter) -> WordsFilter:
-    merged_filter = WordsFilter()
-    merged_filter.excluded_letters = existing_filter.excluded_letters + \
-        new_filter.excluded_letters
-    merged_filter.index_excludes_letters = {
-        **existing_filter.index_excludes_letters, **new_filter.index_excludes_letters}
-    merged_filter.indexed_letters = {
-        **existing_filter.indexed_letters, **new_filter.indexed_letters}
+        # exluded letters
+        self.excluded_letters.extend(new_filter.excluded_letters)
 
-    for letter in new_filter.included_letters:
-        if letter in existing_filter.included_letters:
-            existing_filter.included_letters.remove(letter)
+        # indexed letters
+        for k, v in new_filter.indexed_letters.items():
+            self.indexed_letters.setdefault(k, v)
 
-    merged_filter.included_letters = new_filter.included_letters + \
-        existing_filter.included_letters
+        # index excludes letters
+        for idx, letter_list in new_filter.index_excludes_letters.items():
+            if idx in self.index_excludes_letters.keys() \
+                    and letter_list[0] not in self.index_excludes_letters[idx]:
+                self.index_excludes_letters[idx].extend(letter_list)
+            else:
+                self.index_excludes_letters[idx] = letter_list
 
-    return merged_filter
+        # included letters
+        for letter in new_filter.included_letters:
+            if letter in self.included_letters:
+                self.included_letters.remove(letter)
+        self.included_letters.extend(new_filter.included_letters)
+
+        return self
 
 
 if __name__ == '__main__':
