@@ -2,7 +2,7 @@ import json
 from words_filter import WordsFilter
 from time import time
 from multiprocessing import Pool
-from memory_profiler import profile
+# from memory_profiler import profile
 
 with open('words/targets.json', 'r') as targets_json:
     targets_list = json.load(targets_json)
@@ -98,13 +98,13 @@ def narrowing_score_per_word_multi_threaded(guess: str) -> dict[str, int]:
     return return_dict
 
 
-@profile
+# @profile
 def run_multi():
     tops = ['oater', 'orate', 'roate', 'realo', 'irate', 'retia', 'terai', 'later', 'alter', 'alert', 'artel', 'ratel', 'taler', 'ariel', 'raile', 'arose', 'aeros', 'soare', 'stare', 'arets', 'aster', 'earst', 'rates', 'reast', 'resat',
             'stear', 'strae', 'tares', 'taser', 'tears', 'teras', 'arise', 'raise', 'aesir', 'reais', 'serai', 'arles', 'earls', 'laers', 'lares', 'laser', 'lears', 'rales', 'reals', 'seral', 'antre', 'earnt', 'raine', 'learn', 'renal', 'neral']
 
     with Pool() as p:
-        result = p.map(narrowing_score_per_word_multi_threaded, tops[:20])
+        result = p.map(narrowing_score_per_word_multi_threaded, tops)
 
     combined_results = {}
     for r in result:
