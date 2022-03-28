@@ -4,7 +4,7 @@ from words_filter import WordsFilter
 def merge_filters(existing_filter: WordsFilter, new_filter: WordsFilter) -> WordsFilter:
 
     # exluded letters
-    existing_filter.ExcludedLetters.extend(new_filter.ExcludedLetters)
+    existing_filter.ExcludedLetters.update(new_filter.ExcludedLetters)
 
     # indexed letters
     for k, v in new_filter.IndexedLetters.items():

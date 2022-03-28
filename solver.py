@@ -3,8 +3,8 @@ from words_filter import WordsFilter
 import json
 
 
-class Solver(WordleGame):
-    def __init__(self, target: str = None, results_filter: WordsFilter = None):
+class Solver():
+    def __init__(self, game: WordleGame, target: str = None, results_filter: WordsFilter = None):
         WordleGame.__init__(self, target, results_filter)
 
     def matches_exact_letters(self, word: str) -> bool:
@@ -67,12 +67,20 @@ class Solver(WordleGame):
 
     def narrowing_score_per_word(self, guess_list: list[str]) -> dict[str, int]:
         return_dict = {}
+        # get a copy of self.ResultsFilter
+        # pass it into new solver?
         for tgt in self.answers_that_meet_criteria():
             for guess in guess_list:
                 return_dict.setdefault(guess, 0)
-                score = self.narrowing_score(tgt, guess)
+                score = 0 if tgt == guess else self.narrowing_score(tgt, guess)
                 return_dict[guess] += score
         return return_dict
+
+    def make_guess(self, guess: str) -> WordsFilter:
+        new_filter = WordsFilter.get_new_filter(guess, self.Target)
+        merged_filter = WordsFilter.merge_filters(
+            self.ResultsFilter, new_filter)
+        return merged_filter
 
 
 if __name__ == '__main__':

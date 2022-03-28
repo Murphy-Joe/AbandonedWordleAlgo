@@ -35,35 +35,17 @@ class WordleGame:
     def solved(self) -> bool:
         return self.Guesses[-1] == self.Target
 
-    def get_new_filter(self, guess: str) -> WordsFilter:
-        excluded_letters, included_letters = [], []
-        index_excludes_letters, indexed_letters = {}, {}
-        temp_target = copy(self.Target)
-
-        for i, letter in enumerate(guess):
-            if self.Target == letter:
-                indexed_letters[i] = letter
-            elif letter in temp_target:
-                temp_target = temp_target.replace(letter, '', 1)
-                index_excludes_letters[i] = [letter]
-                included_letters.append(letter)
-            elif letter not in included_letters and letter not in indexed_letters.values():
-                excluded_letters.append(letter)
-        turn_filter = WordsFilter(
-            excluded_letters, included_letters, index_excludes_letters, indexed_letters)
-        return turn_filter
-
-    def update_results_filter(self, new_filter: WordsFilter) -> WordsFilter:
-        self.ResultsFilter.update_filter(new_filter)
-        return self.ResultsFilter
+    def merge_with_current_game_filter(self, new_filter: WordsFilter) -> WordsFilter:
+        return WordsFilter.merge_filters(self.ResultsFilter, new_filter)
 
     def make_guess(self, guess: str) -> WordsFilter:
         self.Guesses.append(guess)
         if self.solved():
             self.end()
-        new_filter = self.get_new_filter(guess)
-        updated_filter = self.update_results_filter(new_filter)
-        return updated_filter
+        new_filter = WordsFilter.get_new_filter(guess, self.Target)
+        merged_filter = WordsFilter.merge_filters(
+            self.ResultsFilter, new_filter)
+        return merged_filter
 
     def end(self):
         pass
@@ -73,5 +55,5 @@ if __name__ == '__main__':
     wg = WordleGame('sunny')
     print(wg.Target)
     wg.make_guess('audio')
+    wg.make_guess('video')
     print(wg.ResultsFilter.__dict__)
-    # print(wg.results_filter.answers_that_meet_criteria(wg.all_targets))
