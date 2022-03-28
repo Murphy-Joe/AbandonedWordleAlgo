@@ -125,5 +125,5 @@ if __name__ == '__main__':
     print(len(answers))
 
     t_start = time()
-    run_multi()
+    print(run_multi())
     print(f"Multi-processor time taken: {time() - t_start}")
