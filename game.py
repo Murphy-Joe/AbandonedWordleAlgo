@@ -1,17 +1,17 @@
-from copy import copy
 import json
 from datetime import date
 import random
 from words_filter import WordsFilter
+from copy import copy
 
 
 class WordleGame:
-    def __init__(self, target: str = None):
-        self.all_targets: list[str] = self.get_targets()
-        self.target: str = target if target else self.all_targets[self.get_todays_target(
+    def __init__(self, target: str = None, results_filter: WordsFilter = None):
+        self.AllTargets: list[str] = self.get_targets()
+        self.Target: str = target if target else self.AllTargets[self.get_todays_target(
         )]
-        self.results_filter = WordsFilter()
-        self.guesses: list[str] = []
+        self.ResultsFilter: WordsFilter = results_filter if results_filter else WordsFilter()
+        self.Guesses: list[str] = []
 
     def get_targets(self) -> list[str]:
         with open('words/targets.json', 'r') as targets_json:
@@ -26,30 +26,22 @@ class WordleGame:
         return answers_idx
 
     def get_random_target(self) -> str:
-        return random.choice(self.all_targets)
+        return random.choice(self.AllTargets)
 
     def set_random_target(self) -> str:
-        self.target = self.get_random_target()
-        return self.target
+        self.Target = self.get_random_target()
+        return self.Target
 
     def solved(self) -> bool:
-        return self.guesses[-1] == self.target
+        return self.Guesses[-1] == self.Target
 
-    def update_results_filter(self, new_filter: WordsFilter) -> WordsFilter:
-        self.results_filter.update_filter(new_filter)
-        return self.results_filter
-
-    def make_guess(self, guess: str) -> WordsFilter:
-        self.guesses.append(guess)
-        if self.solved():
-            self.end()
+    def get_new_filter(self, guess: str) -> WordsFilter:
         excluded_letters, included_letters = [], []
         index_excludes_letters, indexed_letters = {}, {}
-
-        temp_target = copy(self.target)
+        temp_target = copy(self.Target)
 
         for i, letter in enumerate(guess):
-            if self.target == letter:
+            if self.Target == letter:
                 indexed_letters[i] = letter
             elif letter in temp_target:
                 temp_target = temp_target.replace(letter, '', 1)
@@ -59,8 +51,19 @@ class WordleGame:
                 excluded_letters.append(letter)
         turn_filter = WordsFilter(
             excluded_letters, included_letters, index_excludes_letters, indexed_letters)
-        self.update_results_filter(turn_filter)
         return turn_filter
+
+    def update_results_filter(self, new_filter: WordsFilter) -> WordsFilter:
+        self.ResultsFilter.update_filter(new_filter)
+        return self.ResultsFilter
+
+    def make_guess(self, guess: str) -> WordsFilter:
+        self.Guesses.append(guess)
+        if self.solved():
+            self.end()
+        new_filter = self.get_new_filter(guess)
+        updated_filter = self.update_results_filter(new_filter)
+        return updated_filter
 
     def end(self):
         pass
@@ -68,7 +71,7 @@ class WordleGame:
 
 if __name__ == '__main__':
     wg = WordleGame('sunny')
-    print(wg.target)
+    print(wg.Target)
     wg.make_guess('audio')
-    print(wg.results_filter.__dict__)
+    print(wg.ResultsFilter.__dict__)
     # print(wg.results_filter.answers_that_meet_criteria(wg.all_targets))
