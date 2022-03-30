@@ -87,8 +87,7 @@ if __name__ == '__main__':
 
     stuff_after_guess(game)
 
-    # fix the 999999s
-    # take the score of the second best word in targets list
-    # anything with that score or lower goes through the brute force algorithm
+    # take the score of the best word in targets list
+    # anything with that score or better goes through the brute force algorithm
     # take best brute force word and make it the guess
     # if there is a tie at the top, tiebreaker goes to word from targets, otherwise just first word
