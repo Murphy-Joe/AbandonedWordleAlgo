@@ -1,3 +1,4 @@
 *.deta*
 *.pyc
+__pycache__*
 
