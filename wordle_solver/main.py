@@ -7,5 +7,5 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    best_words = await multi_process.run_multi()
+    best_words = multi_process.run_multi()
     return {"best words": best_words}

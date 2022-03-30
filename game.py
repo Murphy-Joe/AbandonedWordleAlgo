@@ -35,15 +35,16 @@ class WordleGame:
         new_filter = WordsFilter.get_new_filter(guess, self.Target)
         merged_filter = WordsFilter.merge_filters(
             self.ResultsFilter, new_filter)
+        self.ResultsFilter = merged_filter
         return merged_filter
 
     def end(self):
-        pass
+        print(f'\n\nYou won in {len(self.Guesses)} guesses!\n')
+        quit()
 
 
 if __name__ == '__main__':
-    wg = WordleGame('sunny')
+    wg = WordleGame()
     print(wg.Target)
-    wg.make_guess('audio')
-    wg.make_guess('video')
+    wg.make_guess('roate')
     print(wg.ResultsFilter.__dict__)

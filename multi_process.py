@@ -4,7 +4,7 @@ from time import time
 from multiprocessing import Pool
 # from memory_profiler import profile
 
-with open('words/targets.json', 'r') as targets_json:
+with open('targets.json', 'r') as targets_json:
     targets_list = json.load(targets_json)
 
 
@@ -104,7 +104,7 @@ def run_multi():
             'stear', 'strae', 'tares', 'taser', 'tears', 'teras', 'arise', 'raise', 'aesir', 'reais', 'serai', 'arles', 'earls', 'laers', 'lares', 'laser', 'lears', 'rales', 'reals', 'seral', 'antre', 'earnt', 'raine', 'learn', 'renal', 'neral']
 
     with Pool() as p:
-        result = p.map(narrowing_score_per_word_multi_threaded, tops)
+        result = p.map(narrowing_score_per_word_multi_threaded, tops[:1])
 
     combined_results = {}
     for r in result:

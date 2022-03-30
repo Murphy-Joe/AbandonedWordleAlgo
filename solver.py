@@ -1,9 +1,7 @@
-from time import time
 from game import WordleGame
 from copy import deepcopy
 from words_filter import WordsFilter
 import json
-from concurrent.futures import ThreadPoolExecutor
 
 with open('words/playable_words.json', 'r') as playable_words:
     guess_words_global = json.load(playable_words)
@@ -124,41 +122,18 @@ if __name__ == '__main__':
     with open('words/playable_words.json', 'r') as playable_words:
         guess_words = json.load(playable_words)
 
-    """ wg = WordleGame('sunny')
+    wg = WordleGame()
+    solver = Solver(wg)
+
     print(wg.Target)
-    wg.make_guess('audio')
-    print(wg.ResultsFilter.__dict__)
+    wg.make_guess('roate')
+    print(f'\nfilter \n{wg.ResultsFilter.__dict__}')
+    solver = Solver(wg)
+    print(
+        f'\nanswers left \n{solver.answers_that_meet_criteria(wg.ResultsFilter)}')
+
     wg.make_guess('noork')
     print(wg.ResultsFilter.__dict__)
     solver = Solver(wg)
     words_left = solver.answers_that_meet_criteria(wg.ResultsFilter)
-    print(words_left) """
-
-    wg = WordleGame()
-    solver = Solver(wg)
-    s = time()
-    with ThreadPoolExecutor(max_workers=100) as exe:
-        result = exe.map(
-            solver.narrowing_score_per_word_multi_threaded, guess_words[:3])
-
-    combined_results = {}
-    for r in result:
-        combined_results.update(r)
-
-    combined_results = solver.narrowing_score_per_word(guess_words[:3])
-
-    sorted_results = dict(
-        sorted(combined_results.items(), key=lambda kv: kv[1]))
-    cnt = 0
-    for k, v in sorted_results.items():
-        print(f'{k} : {v}')
-        cnt += 1
-        if cnt > 20:
-            break
-
-    c = time()
-    print(f'thread map: {c - s}')
-
-    # print(solver.letters_left(words_left))
-    # print(len(solver.narrow_guesses_from_words_left(words_left)))
-    # print(solver.narrowing_score_per_word(guess_words[2000:2050]))
+    print(words_left)

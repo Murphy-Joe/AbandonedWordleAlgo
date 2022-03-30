@@ -1,4 +1,2 @@
-print(set('nnnnn'))
-
-for i in set('nnnnn'):
-    print(i)
+print({'l': 1, 'L': 2})
+print('l' in 'msall')
