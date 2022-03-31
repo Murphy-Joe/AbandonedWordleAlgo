@@ -10,6 +10,7 @@ class WordleGame:
         )]
         self.ResultsFilter: WordsFilter = results_filter if results_filter else WordsFilter()
         self.Guesses: list[str] = []
+        # put a words filter object here are replace static calls, see how bad it gets
 
     def get_targets(self) -> list[str]:
         with open('words/targets.json', 'r') as targets_json:
