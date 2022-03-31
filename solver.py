@@ -99,6 +99,18 @@ class Solver():
                 return_dict[guess] += score
         return return_dict
 
+    # a version for the letter_middle algorithm
+    def narrowing_scores(self, best_words: dict[str, int]) -> dict[str, int]:
+        return_dict = {}
+        targets = self.answers_that_meet_criteria(self.Game.ResultsFilter)
+        best_words = [word.lower() for word in best_words]
+        for tgt in targets:
+            for guess in best_words:
+                return_dict.setdefault(guess, 0)
+                score = self.narrowing_score(tgt, guess) if guess != tgt else 0
+                return_dict[guess] += score
+        return return_dict
+
     def narrowing_score_per_word_multi_threaded(self, guess: str) -> dict[str, int]:
         return_dict = {}
         targets = self.answers_that_meet_criteria(self.Game.ResultsFilter)
