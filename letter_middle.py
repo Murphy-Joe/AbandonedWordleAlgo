@@ -67,16 +67,18 @@ def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
     return [word for word in playable_guesses_w_upper.keys() if playable_guesses_w_upper[word] <= first_target_word_score]
 
 
-def best_guess(wordle_game: WordleGame, best_guesses: list[str]) -> str:
+def best_guess(wordle_game: WordleGame) -> str:
     solver = Solver(wordle_game)
-    words_left = solver.answers_that_meet_criteria(
-        wordle_game.ResultsFilter)
+    words_left = solver.answers_that_meet_criteria(wordle_game.ResultsFilter)
+    best_guesses = words_for_brute_force(wordle_game)
     scores_after_brute_force = solver.narrowing_scores(best_guesses)
+
     sorted_scores = dict(
         sorted(scores_after_brute_force.items(), key=lambda w_s: w_s[1]))
     best_score = sorted_scores[list(sorted_scores.keys())[0]]
     top_word_or_words = [word for word in scores_after_brute_force.keys(
     ) if scores_after_brute_force[word] == best_score]
+
     if len(top_word_or_words) == 1:
         return top_word_or_words[0]
     elif not any(word in words_left for word in top_word_or_words):
@@ -102,8 +104,7 @@ if __name__ == '__main__':
     game = WordleGame('found')
     game.make_guess('roate')
     game.make_guess('oundy')
-    game.make_guess('pound')
-    game.make_guess('found')
+    # game.make_guess('pound')
+    # game.make_guess('found')
 
-    brute_force_words = words_for_brute_force(game)
-    print(best_guess(game, brute_force_words))
+    print(best_guess(game))

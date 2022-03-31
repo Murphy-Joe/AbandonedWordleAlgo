@@ -11,6 +11,7 @@ class Solver():
     def __init__(self, game: WordleGame):
         self.Game = deepcopy(game)
 
+    # region sub-functions
     def matches_exact_letters(self, word: str) -> bool:
         matches_indexed_letters = False
         for index, letter in self.Game.ResultsFilter.IndexedLetters.items():
@@ -43,6 +44,15 @@ class Solver():
             if word[index] in letters:
                 return True
 
+    def narrowing_score(self, target, guess: str) -> int:
+        temp_game = deepcopy(self.Game)
+        new_filter = WordsFilter.get_new_filter(guess, target)
+        merged_filter = WordsFilter.merge_filters(
+            temp_game.ResultsFilter, new_filter)
+        words_left = self.answers_that_meet_criteria(merged_filter)
+        return len(words_left)
+    # endregion
+
     def answers_that_meet_criteria(self, filtr: WordsFilter,  words: list[str] = None) -> list[str]:
         possible_answers = []
         if words is None:
@@ -63,43 +73,6 @@ class Solver():
             possible_answers.append(word)
         return possible_answers
 
-    def letters_left(self, words_left: list[str]) -> set[str]:
-        new_words_left = []
-        letters_guessed = wg.ResultsFilter.IncludedLetters + \
-            list(wg.ResultsFilter.IndexedLetters.values())
-        for word in words_left:
-            for ltr in letters_guessed:
-                if ltr in word:
-                    word = word.replace(ltr, '', 1)
-            new_words_left.append(word)
-
-        return set(''.join(new_words_left))
-
-    def narrow_guesses_from_words_left(self, words_left):
-        ltrs = self.letters_left(words_left)
-        playable_guesses = [
-            word for word in guess_words if any(ltr in ltrs for ltr in word)]
-        return playable_guesses
-
-    def narrowing_score(self, target, guess: str) -> int:
-        temp_game = deepcopy(self.Game)
-        new_filter = WordsFilter.get_new_filter(guess, target)
-        merged_filter = WordsFilter.merge_filters(
-            temp_game.ResultsFilter, new_filter)
-        words_left = self.answers_that_meet_criteria(merged_filter)
-        return len(words_left)
-
-    def narrowing_score_per_word(self, guess_list: list[str]) -> dict[str, int]:
-        return_dict = {}
-        targets = self.answers_that_meet_criteria(self.Game.ResultsFilter)
-        for tgt in targets:
-            for guess in guess_list:
-                return_dict.setdefault(guess, 0)
-                score = self.narrowing_score(tgt, guess) if guess != tgt else 0
-                return_dict[guess] += score
-        return return_dict
-
-    # a version for the letter_middle algorithm
     def narrowing_scores(self, best_words: dict[str, int]) -> dict[str, int]:
         return_dict = {}
         targets = self.answers_that_meet_criteria(self.Game.ResultsFilter)
@@ -109,24 +82,6 @@ class Solver():
                 return_dict.setdefault(guess, 0)
                 score = self.narrowing_score(tgt, guess) if guess != tgt else 0
                 return_dict[guess] += score
-        return return_dict
-
-    def narrowing_score_per_word_multi_threaded(self, guess: str) -> dict[str, int]:
-        return_dict = {}
-        targets = self.answers_that_meet_criteria(self.Game.ResultsFilter)
-        for tgt in targets:
-            return_dict.setdefault(guess, 0)
-            score = self.narrowing_score(tgt, guess) if guess != tgt else 0
-            return_dict[guess] += score
-        return return_dict
-
-    def narrow_multi_thread_per_target(self, target: str) -> dict[str, int]:
-        return_dict = {}
-        for guess in guess_words_global:
-            return_dict.setdefault(guess, 0)
-            score = self.narrowing_score(
-                target, guess) if guess != target else 0
-            return_dict[guess] += score
         return return_dict
 
 
