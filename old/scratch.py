@@ -1,2 +1,2 @@
-print({'l': 1, 'L': 2})
-print('l' in 'msall')
+d = {'l': 1, 'L': 2}
+print([word for word in d])

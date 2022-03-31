@@ -1,7 +1,8 @@
-from game import WordleGame
-from copy import deepcopy
-from words_filter import WordsFilter
 import json
+from copy import deepcopy
+from game import WordleGame
+from words_filter import WordsFilter
+
 
 with open('words/playable_words.json', 'r') as playable_words:
     guess_words_global = json.load(playable_words)
@@ -15,7 +16,7 @@ class Solver():
     def matches_exact_letters(self, word: str) -> bool:
         matches_indexed_letters = False
         for index, letter in self.Game.ResultsFilter.IndexedLetters.items():
-            if (word[index] != letter):
+            if word[index] != letter:
                 matches_indexed_letters = False
                 break
             else:
@@ -102,5 +103,5 @@ if __name__ == '__main__':
     wg.make_guess('noork')
     print(wg.ResultsFilter.__dict__)
     solver = Solver(wg)
-    words_left = solver.answers_that_meet_criteria(wg.ResultsFilter)
-    print(words_left)
+    words_remaining = solver.answers_that_meet_criteria(wg.ResultsFilter)
+    print(words_remaining)

@@ -76,8 +76,8 @@ def best_guess(wordle_game: WordleGame) -> str:
     sorted_scores = dict(
         sorted(scores_after_brute_force.items(), key=lambda w_s: w_s[1]))
     best_score = sorted_scores[list(sorted_scores.keys())[0]]
-    top_word_or_words = [word for word in scores_after_brute_force.keys(
-    ) if scores_after_brute_force[word] == best_score]
+    top_word_or_words = [
+        word for word in scores_after_brute_force if scores_after_brute_force[word] == best_score]
 
     if len(top_word_or_words) == 1:
         return top_word_or_words[0]
@@ -92,8 +92,6 @@ def best_guess(wordle_game: WordleGame) -> str:
 if __name__ == '__main__':
     import json
     from solver import Solver
-
-    from words_filter import WordsFilter
 
     with open('words/targets.json', 'r') as answers_json:
         answers = json.load(answers_json)

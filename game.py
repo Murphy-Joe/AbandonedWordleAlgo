@@ -1,8 +1,6 @@
 import json
 from datetime import date
-import random
 from words_filter import WordsFilter
-from copy import copy
 
 
 class WordleGame:
