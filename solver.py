@@ -12,7 +12,7 @@ class Solver():
     def __init__(self, game: WordleGame):
         self.Game = deepcopy(game)
 
-    # region sub-functions
+    # region filter criteria sub-functions
     def matches_exact_letters(self, word: str) -> bool:
         matches_indexed_letters = False
         for index, letter in self.Game.ResultsFilter.IndexedLetters.items():
@@ -44,14 +44,6 @@ class Solver():
         for index, letters in self.Game.ResultsFilter.IndexExcludesLetters.items():
             if word[index] in letters:
                 return True
-
-    def narrowing_score(self, target, guess: str) -> int:
-        temp_game = deepcopy(self.Game)
-        new_filter = WordsFilter.get_new_filter(guess, target)
-        merged_filter = WordsFilter.merge_filters(
-            temp_game.ResultsFilter, new_filter)
-        words_left = self.answers_that_meet_criteria(merged_filter)
-        return len(words_left)
     # endregion
 
     def answers_that_meet_criteria(self, filtr: WordsFilter,  words: list[str] = None) -> list[str]:
@@ -74,14 +66,22 @@ class Solver():
             possible_answers.append(word)
         return possible_answers
 
-    def narrowing_scores(self, best_words: dict[str, int]) -> dict[str, int]:
+    def play_fake_guess(self, target: str, guess: str, filtered_answers: list[str]) -> int:
+        new_game = WordleGame(target)
+        new_game.make_guess(guess)
+        new_solver = Solver(new_game)
+        words_left = new_solver.answers_that_meet_criteria(
+            new_game.ResultsFilter, filtered_answers)
+        return len(words_left)
+
+    def narrowing_scores(self, best_words: dict[str, int], targets: list[str]) -> dict[str, int]:
         return_dict = {}
-        targets = self.answers_that_meet_criteria(self.Game.ResultsFilter)
         best_words = [word.lower() for word in best_words]
         for tgt in targets:
             for guess in best_words:
                 return_dict.setdefault(guess, 0)
-                score = self.narrowing_score(tgt, guess) if guess != tgt else 0
+                score = self.play_fake_guess(
+                    tgt, guess, targets) if guess != tgt else 0
                 return_dict[guess] += score
         return return_dict
 
