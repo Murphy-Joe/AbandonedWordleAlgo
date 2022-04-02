@@ -44,12 +44,19 @@ def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list
                 word_scores[word] += len(targets_left)
     sorted_word_scores = dict(
         sorted(word_scores.items(), key=lambda w_s: w_s[1]))
+
+    print(
+        f'\nbest words per middleness score out of {len(sorted_word_scores)}')
+    for i, (k, v) in enumerate(sorted_word_scores.items()):
+        print(k, v)
+        if i > 10:
+            break
     return sorted_word_scores
 
 
-def first_target_word_score_in_best_guesses(best_guesses: dict[str, int], targets_left: list[str]) -> int:
-    for word, score in best_guesses.items():
-        if word in targets_left:
+def first_target_word_score_in_best_guesses(best_guesses_w_upper: dict[str, int], targets_left: list[str]) -> int:
+    for word, score in best_guesses_w_upper.items():
+        if word.lower() in targets_left:
             return score
     return 0
 
@@ -64,17 +71,28 @@ def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
     first_target_word_score = first_target_word_score_in_best_guesses(
         playable_guesses_w_upper, words_left)
 
-    return [word for word in playable_guesses_w_upper.keys() if playable_guesses_w_upper[word] <= first_target_word_score]
+    best_words = [word for word in playable_guesses_w_upper.keys(
+    ) if playable_guesses_w_upper[word] <= first_target_word_score]
+    return best_words
 
 
 def best_guess(wordle_game: WordleGame) -> str:
     solver = Solver(wordle_game)
     words_left = solver.answers_that_meet_criteria(wordle_game.ResultsFilter)
     best_guesses = words_for_brute_force(wordle_game)
-    scores_after_brute_force = solver.narrowing_scores(best_guesses)
+    scores_after_brute_force = solver.narrowing_scores(
+        best_guesses, words_left)
 
     sorted_scores = dict(
         sorted(scores_after_brute_force.items(), key=lambda w_s: w_s[1]))
+
+    cnt = 0
+    print(f'\nbest words after brute force out of {len(sorted_scores)}')
+    for k, v in sorted_scores.items():
+        print(k, v)
+        cnt += 1
+        if cnt > 5:
+            break
     best_score = sorted_scores[list(sorted_scores.keys())[0]]
     top_word_or_words = [
         word for word in scores_after_brute_force if scores_after_brute_force[word] == best_score]
@@ -91,6 +109,7 @@ def best_guess(wordle_game: WordleGame) -> str:
 
 if __name__ == '__main__':
     import json
+    import random
     from solver import Solver
 
     with open('words/targets.json', 'r') as answers_json:
@@ -99,10 +118,13 @@ if __name__ == '__main__':
     with open('words/playable_words.json', 'r') as playable_words_json:
         playable_words = json.load(playable_words_json)
 
-    game = WordleGame('found')
+    # print(random.choice(answers))
+    game = WordleGame()
     game.make_guess('roate')
-    game.make_guess('oundy')
-    # game.make_guess('pound')
-    # game.make_guess('found')
+    game.make_guess('punch')
+    game.make_guess('snout')
+    # game.make_guess('slack')
 
-    print(best_guess(game))
+    print(
+        f'words left: {len(Solver(game).answers_that_meet_criteria(game.ResultsFilter))}')
+    print(f'\nbest guess: {best_guess(game)}')
