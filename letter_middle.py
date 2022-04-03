@@ -84,6 +84,7 @@ def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
 
     best_words = [word for word in playable_guesses_w_upper.keys(
     ) if playable_guesses_w_upper[word] <= first_target_word_score]
+    return playable_words
     return best_words
 
 
@@ -104,10 +105,11 @@ def best_guess(wordle_game: WordleGame) -> str:
     cnt = 0
     print(f'\nbest words after brute force out of {len(sorted_scores)}')
     for k, v in sorted_scores.items():
-        print(k, v)
-        cnt += 1
-        if cnt > 5:
-            break
+        if k in words_left:
+            print(k, v)
+            cnt += 1
+            if cnt > 50:
+                break
     best_score = sorted_scores[list(sorted_scores.keys())[0]]
     top_word_or_words = [
         word for word in scores_after_brute_force if scores_after_brute_force[word] == best_score]
@@ -132,11 +134,11 @@ if __name__ == '__main__':
 
     total_start = time()
     # print(random.choice(answers))
-    game = WordleGame()
-    game.make_guess('roate')
-    # game.make_guess('tunes')
-    # game.make_guess('snout')
-    # game.make_guess('slack')
+    game = WordleGame('epoxy')
+    game.make_guess('oater')
+    game.make_guess('shuln')
+    # game.make_guess('weedy')
+    # game.make_guess('fewer')
 
     remaining_answers = Solver(
         game).answers_that_meet_criteria(game.ResultsFilter)

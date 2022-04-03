@@ -1,9 +1,45 @@
-# Our first two guesses looked like this:
+<img src="pics/ROATE.png" alt="roate" width="400"/>
+
+>The world's best opening wordle guess
+
+Many smarter than I have [proposed their best starting words]("https://thesmartlocal.com/read/best-wordle-words/")
+- CRANE (3blue1brown Grant Sanderson)
+- SOARE (3blue1brown Grant Sanderson update)
+- SALET (Mathematician Alex Selby)
+- TRACE (Data analyst Daniel Kats)
+- SERAI (Data analyst Daniel Kats)
+- AROSE (MrExcel.com)
+- AUDIO (Community fav)
+
+Here's an average of how many words would be left using these starting words against the 2,309 possible targets. (Lower is better)
+
+Results first, explanation later
+<img src="pics/StartingWords.png" alt="starting words" width="400"/>
+
+__Explanation:__
+
+Roate was played against all 2,309 Wordle targets. 
+
+For each word, a result is produced. For example if the target were "fewer" this would be the result
+<img src="pics/ROATEresult.png" alt="starting words" width="400"/>
+
+Any time a result is given, it allows us to filter the possible set of targets remaining.  For instance with the above result we match targets that contain an *R and E* but do not *start with R* or *end with E*. 
+
+That filtering leaves 102 targets left. 
+
+`This was done for every single playable word (~13,000) vs every single Wordle target (~2300).`
+
+# That brings us to the simple basis of the entire algorithm
+> ## Use your guess to narrow down the possible answer set as much as possible
+
+Whether it's the first guess with 2309 possible answers or your 4th guess with 3 possible answers, the algorithm will choose the shortest path to winning.  
+
+YAE (Yet Another Example)
+
+# Our first two guesses look like this:
 <img src="pics/first_two_guesses.jpg" alt="first two guesses" width="400"/>
 
-`This was a pretty unlucky start, and it doesn't look like we've gotten very far.`
-
-`But with this information alone we've narrowed our possible answer set down from the starting ~2300 words to 10 words. `
+`From this information alone we've narrowed our possible answer set down from the starting ~2300 words to 10 words. `
 
 ## The possible remaining words are
 ||||||
@@ -17,7 +53,25 @@
 2. Narrow down the field to one other answer if incorrect
 ---
 
-These words are also in order of which guesses will narrow the field the most.  If we choose "voice"
+Our algorithm produces these results
+<img src="pics/3rdGuessResults.png" alt="third guess" width="400"/>
+
+- Light blue are the top 3 playable words 
+- Darker blue are the 10 target words remaining from the filter
+
+Playing "dicky" against of the remaining 10 target words is *guaranteed* to filter the possible remaining words down to 1 option. 
+
+Now what about "biome"?  It has an average remaining words count of 1.1, *plus* it gives you a chance to win on this turn since it comes from the target words. 
+
+Lets look at the possible results from playing "biome"
+
+## 4/2 To be continued...
+
+
+
+
+
+<!-- These words are also in order of which guesses will narrow the field the most.  If we choose "voice"
 <img src="pics/third_guess.png" alt="third guess" width="400"/>
 
 ## Possible remaining words
@@ -41,4 +95,4 @@ So the takeaway is given a list of equally likely possibilities, your best guess
 *Using a word from the possible answers (~2,300) list gives you a chance of winning on the play, but less narrowing if your miss*
 
 *Using a word from the allowable guesses (~13,000) list gives you zero chance of winning on the play but guaranteed to maximally narrow your remaining possibilities* 
-
+ -->
