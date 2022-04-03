@@ -20,7 +20,7 @@ __Explanation:__
 
 Roate was played against all 2,309 Wordle targets. 
 
-For each word, a result is produced. For example if the target were "fewer" this would be the result
+For each word, a result is produced. For example if the target answer for today was "fewer", this would be the result
 <img src="pics/ROATEresult.png" alt="starting words" width="400"/>
 
 Any time a result is given, it allows us to filter the possible set of targets remaining.  For instance with the above result we match targets that contain an *R and E* but do not *start with R* or *end with E*. 
