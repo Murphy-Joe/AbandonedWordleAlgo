@@ -74,7 +74,7 @@ class Solver():
             new_game.ResultsFilter, filtered_answers)
         return len(words_left)
 
-    def narrowing_scores(self, best_words: dict[str, int], targets: list[str]) -> dict[str, int]:
+    def narrowing_scores(self, best_words: list[str], targets: list[str]) -> dict[str, int]:
         return_dict = {}
         best_words = [word.lower() for word in best_words]
         for tgt in targets:
@@ -83,6 +83,20 @@ class Solver():
                 score = self.play_fake_guess(
                     tgt, guess, targets) if guess != tgt else 0
                 return_dict[guess] += score
+        for word, score in return_dict.items():
+            return_dict[word] = score / len(targets)
+        return return_dict
+
+    def narrowing_score_per_guess_async(self, guess_word: str, targets: list[str]) -> dict[str, int]:
+        return_dict = {}
+        guess_word = guess_word.lower()
+        for tgt in targets:
+            return_dict.setdefault(guess_word, 0)
+            score = self.play_fake_guess(
+                tgt, guess_word, targets) if guess_word != tgt else 0
+            return_dict[guess_word] += score
+        for word, score in return_dict.items():
+            return_dict[word] = score / len(targets)
         return return_dict
 
 

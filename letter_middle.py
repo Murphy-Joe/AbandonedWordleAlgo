@@ -1,4 +1,10 @@
+import json
+from time import time
 from game import WordleGame
+from solver import Solver
+
+with open('words/playable_words.json', 'r') as playable_words_json:
+    playable_words = json.load(playable_words_json)
 
 
 def make_second_appearance_of_letter_uppercase(word: str) -> str:
@@ -45,20 +51,25 @@ def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list
     sorted_word_scores = dict(
         sorted(word_scores.items(), key=lambda w_s: w_s[1]))
 
-    print(
-        f'\nbest words per middleness score out of {len(sorted_word_scores)}')
-    for i, (k, v) in enumerate(sorted_word_scores.items()):
-        print(k, v)
-        if i > 10:
-            break
+    # print(
+    #     f'\nbest words per middleness score out of {len(sorted_word_scores)}')
+    # for i, (k, v) in enumerate(sorted_word_scores.items()):
+    #     print(k, v)
+    #     if i > 10:
+    #         break
     return sorted_word_scores
 
 
 def first_target_word_score_in_best_guesses(best_guesses_w_upper: dict[str, int], targets_left: list[str]) -> int:
-    for word, score in best_guesses_w_upper.items():
-        if word.lower() in targets_left:
-            return score
-    return 0
+    if len(best_guesses_w_upper) < 50:
+        return best_guesses_w_upper[list(best_guesses_w_upper.keys())[-1]]
+    return best_guesses_w_upper[list(best_guesses_w_upper.keys())[49]]
+    # cnt = 0
+    # for word, score in best_guesses_w_upper.items():
+    #     cnt += 1
+    #     if word.lower() in targets_left or cnt > 50:
+    #         return score
+    # return 0
 
 
 def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
@@ -80,8 +91,12 @@ def best_guess(wordle_game: WordleGame) -> str:
     solver = Solver(wordle_game)
     words_left = solver.answers_that_meet_criteria(wordle_game.ResultsFilter)
     best_guesses = words_for_brute_force(wordle_game)
+
+    brute_force_start = time()
     scores_after_brute_force = solver.narrowing_scores(
         best_guesses, words_left)
+    brute_force_end = time()
+    print(f'\nbrute force time: {brute_force_end-brute_force_start}')
 
     sorted_scores = dict(
         sorted(scores_after_brute_force.items(), key=lambda w_s: w_s[1]))
@@ -108,23 +123,25 @@ def best_guess(wordle_game: WordleGame) -> str:
 
 
 if __name__ == '__main__':
-    import json
+
     import random
     from solver import Solver
 
     with open('words/targets.json', 'r') as answers_json:
         answers = json.load(answers_json)
 
-    with open('words/playable_words.json', 'r') as playable_words_json:
-        playable_words = json.load(playable_words_json)
-
+    total_start = time()
     # print(random.choice(answers))
     game = WordleGame()
     game.make_guess('roate')
-    game.make_guess('punch')
-    game.make_guess('snout')
+    # game.make_guess('tunes')
+    # game.make_guess('snout')
     # game.make_guess('slack')
 
-    print(
-        f'words left: {len(Solver(game).answers_that_meet_criteria(game.ResultsFilter))}')
+    remaining_answers = Solver(
+        game).answers_that_meet_criteria(game.ResultsFilter)
+    print(f'words left: {remaining_answers}') if len(
+        remaining_answers) < 6 else print(f'words left: {len(remaining_answers)}')
     print(f'\nbest guess: {best_guess(game)}')
+    total_end = time()
+    print(f'\ntotal time: {total_end-total_start}')

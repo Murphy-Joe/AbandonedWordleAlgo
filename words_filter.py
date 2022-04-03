@@ -3,15 +3,29 @@ from copy import copy
 
 
 class WordsFilter:
+    # def __init__(self,
+    #              excluded_letters: set[str] = set(),
+    #              included_letters: list[str] = [],
+    #              index_excludes_letters: dict[int, list[str]] = {},
+    #              indexed_letters: dict[int, str] = {}):
+    #     self.ExcludedLetters = excluded_letters
+    #     self.IncludedLetters = included_letters
+    #     self.IndexExcludesLetters = index_excludes_letters
+    #     self.IndexedLetters = indexed_letters
+
     def __init__(self,
-                 excluded_letters: set[str] = set(),
-                 included_letters: list[str] = [],
-                 index_excludes_letters: dict[int, list[str]] = {},
-                 indexed_letters: dict[int, str] = {}):
-        self.ExcludedLetters = excluded_letters
-        self.IncludedLetters = included_letters
-        self.IndexExcludesLetters = index_excludes_letters
-        self.IndexedLetters = indexed_letters
+                 excluded_letters=None,
+                 included_letters=None,
+                 index_excludes_letters=None,
+                 indexed_letters=None):
+        self.ExcludedLetters: set[str] = excluded_letters if excluded_letters else set(
+        )
+        self.IncludedLetters: list[str] = included_letters if included_letters else [
+        ]
+        self.IndexExcludesLetters: dict[int, list[str]
+                                        ] = index_excludes_letters if index_excludes_letters else {}
+        self.IndexedLetters: dict[int,
+                                  str] = indexed_letters if indexed_letters else {}
 
     @staticmethod
     def get_new_filter(guess: str, target: str) -> WordsFilter:

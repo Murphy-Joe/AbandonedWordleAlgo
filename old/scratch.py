@@ -1,2 +1,2 @@
-d = {'l': 1, 'L': 2}
-print([word for word in d])
+l = [1, 2, 3]
+print(l[:50])
