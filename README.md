@@ -1,3 +1,8 @@
+[Best opener](#best_opener)
+
+[Algorithm in one sentence](#algor)
+
+<a name="best_opener"></a>
 <img src="pics/ROATE.png" alt="roate" width="400"/>
 
 >The world's best opening wordle guess
@@ -29,6 +34,7 @@ That filtering leaves 102 targets left.
 
 `This was done for every single playable word (~13,000) vs every single Wordle target (~2300).`
 
+<a name="algor"></a>
 # That brings us to the simple basis of the entire algorithm
 > ## Use your guess to narrow down the possible answer set as much as possible
 
@@ -48,7 +54,9 @@ YAE (Yet Another Example)
 | epoxy | dodge | booze | diode | evoke |
 
 
-`Ideally, we would pick a word from the list that would either`
+`Ideally, we would pick a word from the list that would eithe
+
+r`
 1. Be correct
 2. Narrow down the field to one other answer if incorrect
 ---
