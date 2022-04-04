@@ -140,10 +140,24 @@ if __name__ == '__main__':
 
     total_start = time()
     # print(random.choice(answers))
-    game = WordleGame('epoxy')
-    game.make_guess('oater')
-    game.make_guess('shuln')
-    # game.make_guess('weedy')
+    # "their",
+    # "slosh",
+    # "purge",
+    # "chest",
+    # "depot",
+    # "epoxy",
+    # "nymph",
+    # "found",
+    # "shall",
+    # "stove",
+    # "lowly",
+    # "snout",
+    # "trope",
+    # "fewer",
+    game = WordleGame('trope')
+    game.make_guess('roate')
+    # game.make_guess('pwned')
+    # game.make_guess('shawl')
     # game.make_guess('fewer')
 
     remaining_answers = Solver(

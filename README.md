@@ -28,7 +28,7 @@ Results first, explanation later
 <a name="algor"></a>
 # Algorithm in One Sentence
 > ## Use your guess to narrow down the possible answer set as much as possible  
-`Whether it's the first guess with 2309 possible answers or the fourth guess with 3 possible answers, the algorithm will choose the shortest path to winning.`
+`Whether it's the first guess with 2309 possible answers or the fourth guess with 3 possible answers, this algorithm will choose the shortest path to winning.`
 
 <br/><br/><br/><br/>
 <a name="#explain"></a>
@@ -39,11 +39,14 @@ Roate was played against all 2,309 Wordle targets.
 For each word, a result is produced. For example if the target answer for today was "fewer", this would be the result
 <img src="pics/ROATEresult.png" alt="starting words" width="400"/>
 
-Any time a result is given, it allows us to filter the possible set of targets remaining.  For instance with the above result we match targets that contain an *R and E* but do not *start with R* or *end with E*. 
+Any time a result is given, it allows us to filter the possible set of targets remaining.  For instance with the above result we match targets that 
+`contain R and E`  
+`do not start with R`  
+`do not end with E` 
 
-That filtering leaves 102 targets left. 
+This filtering leaves 102 targets left. 
 
-`This was done for every single playable word (~13,000) vs every single Wordle target (~2300).`
+`This process was done for every single playable word (~13,000) vs every single Wordle target (~2300).`
 
 
 <br/><br/><br/><br/>
@@ -62,18 +65,20 @@ That filtering leaves 102 targets left.
 
 ### Ideally, we would pick a word from the list that would either
 1. Be correct
-2. Narrow down the field to one other answer if incorrect
+2. Narrow down the remaining field the most
 ---
 
-Our algorithm produces these results
+Our algorithm produces these results (lower is better)
 <img src="pics/3rdGuessResults.png" alt="third guess" width="400"/>
 
 - Light blue are the top 3 playable words followed by 20+ more combined into "..more" 
 - Darker blue are the 10 target words remaining from the filter
 
-Playing "dicky" against of the remaining 10 target words is *guaranteed* to filter the possible remaining words down to 1 option. 
+Playing "dicky" against of the remaining 10 target words is *guaranteed* to filter the possible remaining words down to 1 option.  
+ - It's also guaranteed to not win this turn. 
 
-Now what about "biome"?  It has an average remaining words count of 1.1, *plus* it gives you a chance to win on this turn since it comes from the target words. 
+So what about "biome"? It could win this turn and it's very close to "dicky" in field narrowing.  Would it be a better choice? 
+
 
 Lets look at the possible results from playing "biome"
 
