@@ -33,10 +33,19 @@ def letters_sorted_by_middleness(word_list: list[str]) -> dict[str, int]:
 
     sorted_freq_results = dict(sorted(freq_results.items(),
                                       key=lambda ltr_frq: ltr_frq[1]))
+
+    print(f'\nletter freq scores')
+    cnt = 0
+    for ltr, freq in sorted_freq_results.items():
+        print(ltr, freq)
+        cnt += 1
+        if cnt > 10:
+            break
+
     return sorted_freq_results
 
 
-def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list[str]) -> dict[str, int]:
+def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list[str]) -> list[tuple[str, int]]:
     letter_scores = letters_sorted_by_middleness(targets_left)
     guess_list = [make_second_appearance_of_letter_uppercase(
         word) for word in guess_list]
@@ -48,8 +57,7 @@ def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list
                 word_scores[word] += letter_scores[ltr]
             except KeyError:  # ltr not in targets_left
                 word_scores[word] += len(targets_left)
-    sorted_word_scores = dict(
-        sorted(word_scores.items(), key=lambda w_s: w_s[1]))
+    sorted_word_scores = sorted(word_scores.items(), key=lambda w_s: w_s[1])
 
     # print(
     #     f'\nbest words per middleness score out of {len(sorted_word_scores)}')
@@ -60,18 +68,6 @@ def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list
     return sorted_word_scores
 
 
-def first_target_word_score_in_best_guesses(best_guesses_w_upper: dict[str, int], targets_left: list[str]) -> int:
-    if len(best_guesses_w_upper) < 50:
-        return best_guesses_w_upper[list(best_guesses_w_upper.keys())[-1]]
-    return best_guesses_w_upper[list(best_guesses_w_upper.keys())[49]]
-    # cnt = 0
-    # for word, score in best_guesses_w_upper.items():
-    #     cnt += 1
-    #     if word.lower() in targets_left or cnt > 50:
-    #         return score
-    # return 0
-
-
 def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
     words_left = Solver(wordle_game).answers_that_meet_criteria(
         wordle_game.ResultsFilter)
@@ -79,13 +75,24 @@ def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
     playable_guesses_w_upper = words_sorted_by_middleness_w_upper(
         words_left, playable_words)
 
-    first_target_word_score = first_target_word_score_in_best_guesses(
-        playable_guesses_w_upper, words_left)
+    print(f'\nword eligibility for brute force algo')
+    cnt = 0
+    for k, v in playable_guesses_w_upper:
+        print(k, v)
+        cnt += 1
+        if cnt > 10:
+            break
 
-    best_words = [word for word in playable_guesses_w_upper.keys(
-    ) if playable_guesses_w_upper[word] <= first_target_word_score]
-    return playable_words
-    return best_words
+    guesses_w_upper_from_targets = words_sorted_by_middleness_w_upper(
+        words_left, words_left)
+
+    best_playable_guesses_w_upper = [tup[0]
+                                     for tup in playable_guesses_w_upper[:40]]
+    best_guesses_w_upper_from_targets = [tup[0]
+                                         for tup in guesses_w_upper_from_targets[:10]]
+    best_guesses = best_playable_guesses_w_upper + best_guesses_w_upper_from_targets
+
+    return list(set(best_guesses))
 
 
 def best_guess(wordle_game: WordleGame) -> str:
@@ -105,11 +112,10 @@ def best_guess(wordle_game: WordleGame) -> str:
     cnt = 0
     print(f'\nbest words after brute force out of {len(sorted_scores)}')
     for k, v in sorted_scores.items():
-        if k in words_left:
-            print(k, v)
-            cnt += 1
-            if cnt > 50:
-                break
+        print(k, v)
+        cnt += 1
+        if cnt > 10:
+            break
     best_score = sorted_scores[list(sorted_scores.keys())[0]]
     top_word_or_words = [
         word for word in scores_after_brute_force if scores_after_brute_force[word] == best_score]
