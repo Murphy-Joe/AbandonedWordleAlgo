@@ -1,8 +1,12 @@
-[Best opener](#best_opener)
+[Best opener](#best_opener)  
+[Algorithm in one sentence](#algor)  
+[Explanation](#explain)  
+[Example](#ex)  
+[Performance](#performance)
 
-[Algorithm in one sentence](#algor)
-
+<br/><br/>
 <a name="best_opener"></a>
+# Best Opener
 <img src="pics/ROATE.png" alt="roate" width="400"/>
 
 >The world's best opening wordle guess
@@ -20,8 +24,15 @@ Here's an average of how many words would be left using these starting words aga
 
 Results first, explanation later
 <img src="pics/StartingWords.png" alt="starting words" width="400"/>
+<br/><br/><br/><br/>
+<a name="algor"></a>
+# Algorithm in One Sentence
+> ## Use your guess to narrow down the possible answer set as much as possible  
+`Whether it's the first guess with 2309 possible answers or the fourth guess with 3 possible answers, the algorithm will choose the shortest path to winning.`
 
-__Explanation:__
+<br/><br/><br/><br/>
+<a name="#explain"></a>
+# Explanation
 
 Roate was played against all 2,309 Wordle targets. 
 
@@ -34,29 +45,22 @@ That filtering leaves 102 targets left.
 
 `This was done for every single playable word (~13,000) vs every single Wordle target (~2300).`
 
-<a name="algor"></a>
-# That brings us to the simple basis of the entire algorithm
-> ## Use your guess to narrow down the possible answer set as much as possible
 
-Whether it's the first guess with 2309 possible answers or your 4th guess with 3 possible answers, the algorithm will choose the shortest path to winning.  
-
-YAE (Yet Another Example)
-
-# Our first two guesses look like this:
+<br/><br/><br/><br/>
+<a name="#ex"></a>
+# Example
 <img src="pics/first_two_guesses.jpg" alt="first two guesses" width="400"/>
 
 `From this information alone we've narrowed our possible answer set down from the starting ~2300 words to 10 words. `
 
-## The possible remaining words are
+### The possible remaining words are
 ||||||
 |---|---|---|---|---|
 | voice | movie | biome | decoy | gecko |
 | epoxy | dodge | booze | diode | evoke |
 
 
-`Ideally, we would pick a word from the list that would eithe
-
-r`
+### Ideally, we would pick a word from the list that would either
 1. Be correct
 2. Narrow down the field to one other answer if incorrect
 ---
@@ -64,7 +68,7 @@ r`
 Our algorithm produces these results
 <img src="pics/3rdGuessResults.png" alt="third guess" width="400"/>
 
-- Light blue are the top 3 playable words 
+- Light blue are the top 3 playable words followed by 20+ more combined into "..more" 
 - Darker blue are the 10 target words remaining from the filter
 
 Playing "dicky" against of the remaining 10 target words is *guaranteed* to filter the possible remaining words down to 1 option. 
