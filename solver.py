@@ -46,7 +46,7 @@ class Solver():
                 return True
     # endregion
 
-    async def answers_that_meet_criteria(self, filtr: WordsFilter,  words: list[str] = None) -> list[str]:
+    def answers_that_meet_criteria(self, filtr: WordsFilter,  words: list[str] = None) -> list[str]:
         possible_answers = []
         if words is None:
             words = self.Game.AllTargets
@@ -66,11 +66,11 @@ class Solver():
             possible_answers.append(word)
         return possible_answers
 
-    async def play_fake_guess(self, target: str, guess: str, filtered_answers: list[str]) -> int:
+    def play_fake_guess(self, target: str, guess: str, filtered_answers: list[str]) -> int:
         new_game = WordleGame(target)
         new_game.make_guess(guess)
         new_solver = Solver(new_game)
-        words_left = await new_solver.answers_that_meet_criteria(
+        words_left = new_solver.answers_that_meet_criteria(
             new_game.ResultsFilter, filtered_answers)
         return len(words_left)
 
@@ -87,14 +87,14 @@ class Solver():
             return_dict[word] = score / len(targets_left)
         return return_dict
 
-    async def narrowing_score_per_guess_async(self, guess_word: str, targets_left: list[str]) -> dict[str, int]:
+    def narrowing_score_per_guess_async(self, guess_word: str, targets_left: list[str]) -> dict[str, int]:
         guess_word = guess_word.lower()
         score = 0
         for tgt in targets_left:
             if guess_word == tgt:
                 continue
             else:
-                score += await self.play_fake_guess(tgt, guess_word, targets_left)
+                score += self.play_fake_guess(tgt, guess_word, targets_left)
         return {guess_word: score/len(targets_left)}
 
 

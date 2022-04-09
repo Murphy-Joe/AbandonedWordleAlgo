@@ -19,10 +19,10 @@ class Guesses(BaseModel):
 async def root(body: Guesses):
     game = WordleGame()
     for guess in body.guesses:
-        await game.make_guess(guess)
+        game.make_guess(guess)
     solver = Solver(game)
-    wordsLeft = await solver.answers_that_meet_criteria(game.ResultsFilter)
-    bestGuessWords = await words_for_brute_force(game)
+    wordsLeft = solver.answers_that_meet_criteria(game.ResultsFilter)
+    bestGuessWords = words_for_brute_force(game)
     return {
         "wordsLeft": wordsLeft,
         "bestGuessWords": bestGuessWords,
@@ -53,10 +53,10 @@ async def test(item: str):
 async def single_guess_dict(body: Guesses):
     game = WordleGame()
     for guess in body.guesses:
-        await game.make_guess(guess)
+        game.make_guess(guess)
     solver = Solver(game)
-    words_left = await solver.answers_that_meet_criteria(game.ResultsFilter)
-    guess_dict = await solver.narrowing_score_per_guess_async(body.next_guess, words_left)
+    words_left = solver.answers_that_meet_criteria(game.ResultsFilter)
+    guess_dict = solver.narrowing_score_per_guess_async(body.next_guess, words_left)
     return guess_dict
 
 if __name__ == "__main__":

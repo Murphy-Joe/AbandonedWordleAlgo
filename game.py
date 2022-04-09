@@ -27,7 +27,7 @@ class WordleGame:
     def merge_with_current_game_filter(self, new_filter: WordsFilter) -> WordsFilter:
         return WordsFilter.merge_filters(self.ResultsFilter, new_filter)
 
-    async def make_guess(self, guess: str) -> WordsFilter:
+    def make_guess(self, guess: str) -> WordsFilter:
         self.Guesses.append(guess)
         if self.Guesses[-1] == self.Target:
             self.end()
