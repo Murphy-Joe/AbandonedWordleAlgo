@@ -46,7 +46,7 @@ class Solver():
                 return True
     # endregion
 
-    def answers_that_meet_criteria(self, filtr: WordsFilter,  words: list[str] = None) -> list[str]:
+    async def answers_that_meet_criteria(self, filtr: WordsFilter,  words: list[str] = None) -> list[str]:
         possible_answers = []
         if words is None:
             words = self.Game.AllTargets
@@ -66,38 +66,36 @@ class Solver():
             possible_answers.append(word)
         return possible_answers
 
-    def play_fake_guess(self, target: str, guess: str, filtered_answers: list[str]) -> int:
+    async def play_fake_guess(self, target: str, guess: str, filtered_answers: list[str]) -> int:
         new_game = WordleGame(target)
         new_game.make_guess(guess)
         new_solver = Solver(new_game)
-        words_left = new_solver.answers_that_meet_criteria(
+        words_left = await new_solver.answers_that_meet_criteria(
             new_game.ResultsFilter, filtered_answers)
         return len(words_left)
 
-    def narrowing_scores(self, best_words: list[str], targets: list[str]) -> dict[str, int]:
+    def narrowing_scores(self, best_words: list[str], targets_left: list[str]) -> dict[str, int]:
         return_dict = {}
         best_words = [word.lower() for word in best_words]
-        for tgt in targets:
+        for tgt in targets_left:
             for guess in best_words:
                 return_dict.setdefault(guess, 0)
                 score = self.play_fake_guess(
-                    tgt, guess, targets) if guess != tgt else 0
+                    tgt, guess, targets_left) if guess != tgt else 0
                 return_dict[guess] += score
         for word, score in return_dict.items():
-            return_dict[word] = score / len(targets)
+            return_dict[word] = score / len(targets_left)
         return return_dict
 
-    def narrowing_score_per_guess_async(self, guess_word: str, targets: list[str]) -> dict[str, int]:
-        return_dict = {}
+    async def narrowing_score_per_guess_async(self, guess_word: str, targets_left: list[str]) -> dict[str, int]:
         guess_word = guess_word.lower()
-        for tgt in targets:
-            return_dict.setdefault(guess_word, 0)
-            score = self.play_fake_guess(
-                tgt, guess_word, targets) if guess_word != tgt else 0
-            return_dict[guess_word] += score
-        for word, score in return_dict.items():
-            return_dict[word] = score / len(targets)
-        return return_dict
+        score = 0
+        for tgt in targets_left:
+            if guess_word == tgt:
+                continue
+            else:
+                score += await self.play_fake_guess(tgt, guess_word, targets_left)
+        return {guess_word: score/len(targets_left)}
 
 
 if __name__ == '__main__':

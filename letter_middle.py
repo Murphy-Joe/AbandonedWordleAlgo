@@ -34,13 +34,13 @@ def letters_sorted_by_middleness(word_list: list[str]) -> dict[str, int]:
     sorted_freq_results = dict(sorted(freq_results.items(),
                                       key=lambda ltr_frq: ltr_frq[1]))
 
-    print(f'\nletter freq scores')
-    cnt = 0
-    for ltr, freq in sorted_freq_results.items():
-        print(ltr, freq)
-        cnt += 1
-        if cnt > 10:
-            break
+    # print(f'\nletter freq scores')
+    # cnt = 0
+    # for ltr, freq in sorted_freq_results.items():
+    #     print(ltr, freq)
+    #     cnt += 1
+    #     if cnt > 10:
+    #         break
 
     return sorted_freq_results
 
@@ -68,20 +68,20 @@ def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list
     return sorted_word_scores
 
 
-def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
-    words_left = Solver(wordle_game).answers_that_meet_criteria(
+async def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
+    words_left = await Solver(wordle_game).answers_that_meet_criteria(
         wordle_game.ResultsFilter)
 
     playable_guesses_w_upper = words_sorted_by_middleness_w_upper(
         words_left, playable_words)
 
-    print(f'\nword eligibility for brute force algo')
-    cnt = 0
-    for k, v in playable_guesses_w_upper:
-        print(k, v)
-        cnt += 1
-        if cnt > 10:
-            break
+    # print(f'\nword eligibility for brute force algo')
+    # cnt = 0
+    # for k, v in playable_guesses_w_upper:
+    #     print(k, v)
+    #     cnt += 1
+    #     if cnt > 10:
+    #         break
 
     guesses_w_upper_from_targets = words_sorted_by_middleness_w_upper(
         words_left, words_left)
@@ -95,27 +95,27 @@ def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
     return list(set(best_guesses))
 
 
-def best_guess(wordle_game: WordleGame) -> str:
+async def best_guess(wordle_game: WordleGame) -> str:
     solver = Solver(wordle_game)
     words_left = solver.answers_that_meet_criteria(wordle_game.ResultsFilter)
-    best_guesses = words_for_brute_force(wordle_game)
+    best_guesses = await words_for_brute_force(wordle_game)
 
     brute_force_start = time()
     scores_after_brute_force = solver.narrowing_scores(
         best_guesses, words_left)
     brute_force_end = time()
-    print(f'\nbrute force time: {brute_force_end-brute_force_start}')
+    # print(f'\nbrute force time: {brute_force_end-brute_force_start}')
 
     sorted_scores = dict(
         sorted(scores_after_brute_force.items(), key=lambda w_s: w_s[1]))
 
     cnt = 0
-    print(f'\nbest words after brute force out of {len(sorted_scores)}')
-    for k, v in sorted_scores.items():
-        print(k, v)
-        cnt += 1
-        if cnt > 10:
-            break
+    # print(f'\nbest words after brute force out of {len(sorted_scores)}')
+    # for k, v in sorted_scores.items():
+    #     print(k, v)
+    #     cnt += 1
+    #     if cnt > 10:
+    #         break
     best_score = sorted_scores[list(sorted_scores.keys())[0]]
     top_word_or_words = [
         word for word in scores_after_brute_force if scores_after_brute_force[word] == best_score]
@@ -140,24 +140,10 @@ if __name__ == '__main__':
 
     total_start = time()
     # print(random.choice(answers))
-    # "their",
-    # "slosh",
-    # "purge",
-    # "chest",
-    # "depot",
-    # "epoxy",
-    # "nymph",
-    # "found",
-    # "shall",
-    # "stove",
-    # "lowly",
-    # "snout",
-    # "trope",
-    # "fewer",
-    game = WordleGame('trope')
+    game = WordleGame()
     game.make_guess('roate')
-    # game.make_guess('pwned')
-    # game.make_guess('shawl')
+    # game.make_guess('liman')
+    # game.make_guess('coach')
     # game.make_guess('fewer')
 
     remaining_answers = Solver(
@@ -167,3 +153,4 @@ if __name__ == '__main__':
     print(f'\nbest guess: {best_guess(game)}')
     total_end = time()
     print(f'\ntotal time: {total_end-total_start}')
+

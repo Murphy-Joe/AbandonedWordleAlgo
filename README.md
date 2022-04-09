@@ -9,7 +9,7 @@
 # Best Opener
 <img src="pics/ROATE.png" alt="roate" width="400"/>
 
->The world's best opening wordle guess
+>The world's best opening wordle guess  
 
 Many smarter than I have [proposed their best starting words]("https://thesmartlocal.com/read/best-wordle-words/")
 - CRANE (3blue1brown Grant Sanderson)
@@ -29,6 +29,7 @@ Results first, explanation later
 # Algorithm in One Sentence
 > ## Use your guess to narrow down the possible answer set as much as possible  
 `Whether it's the first guess with 2309 possible answers or the fourth guess with 3 possible answers, this algorithm will choose the shortest path to winning.`
+> This algorithm averages 3.53 guesses
 
 <br/><br/><br/><br/>
 <a name="#explain"></a>

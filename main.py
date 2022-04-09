@@ -1,26 +1,32 @@
-from time import sleep
-from game import WordleGame
-from solver import Solver
-from letter_middle import best_guess, words_for_brute_force
-from fastapi import FastAPI, Query
+import asyncio
+from typing import Optional
 
+from fastapi import FastAPI, Query
+from pydantic import BaseModel
+
+from game import WordleGame
+from letter_middle import words_for_brute_force
+from solver import Solver
+
+# pylint: disable=invalid-name
 app = FastAPI()
 
+class Guesses(BaseModel):
+    guesses: list[str]
+    next_guess: Optional[str]
 
-@app.get("/wordsleft")
-async def root(guesses: str = Query(str)):
-    guesses = guesses.split(',')
+@app.post("/wordsleft")
+async def root(body: Guesses):
     game = WordleGame()
-    for guess in guesses:
-        game.make_guess(guess)
+    for guess in body.guesses:
+        await game.make_guess(guess)
     solver = Solver(game)
-    wordsLeft = solver.answers_that_meet_criteria(game.ResultsFilter)
-    bestGuessWords = words_for_brute_force(game)
+    wordsLeft = await solver.answers_that_meet_criteria(game.ResultsFilter)
+    bestGuessWords = await words_for_brute_force(game)
     return {
         "wordsLeft": wordsLeft,
         "bestGuessWords": bestGuessWords,
     }
-
 
 @app.get("/nextguesses")
 async def get_guess_dict(guesses: str = Query(str), nextguess: str = Query(str)):
@@ -36,16 +42,22 @@ async def get_guess_dict(guesses: str = Query(str), nextguess: str = Query(str))
         "data": guessDict
     }
 
-
 @app.get("/{item}")
 async def test(item: str):
-    sleep(1)
+    await asyncio.sleep(1)
     return {
         "item": item
     }
 
-
-app.get("bestguess/{params}")
+@app.post("/game")
+async def single_guess_dict(body: Guesses):
+    game = WordleGame()
+    for guess in body.guesses:
+        await game.make_guess(guess)
+    solver = Solver(game)
+    words_left = await solver.answers_that_meet_criteria(game.ResultsFilter)
+    guess_dict = await solver.narrowing_score_per_guess_async(body.next_guess, words_left)
+    return guess_dict
 
 if __name__ == "__main__":
     import uvicorn
