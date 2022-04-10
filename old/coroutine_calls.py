@@ -37,12 +37,19 @@ async def guess_score(guess_list, session, next_guess):
 async def runner(guess_list: list[str]):
     async with aiohttp.ClientSession("https://1vv6d7.deta.dev") as session:
         resp_targets_and_guesses = await targets_and_guesses(guess_list, session)
+        print(f'\nnumber of guesses to check: {len(resp_targets_and_guesses["bestGuessWords"])}')
+        print(f'number of targets left: {len(resp_targets_and_guesses["wordsLeft"])}')
+        if len(resp_targets_and_guesses["wordsLeft"]) == 1 and resp_targets_and_guesses["wordsLeft"][0] == guess_list[-1]:
+            print(f'You won in {len(guess_list)} guesses!')
         tasks = []
         for next_guess in resp_targets_and_guesses["bestGuessWords"]:
             task = asyncio.create_task(guess_score(guess_list, session, next_guess))
             tasks.append(task)
         res = await asyncio.gather(*tasks, return_exceptions=True)
-        print(res)
+        res.sort(key=lambda x: x[1])
+        return res[0]
+
+
 
 """ async def main():
     # Schedule three calls *concurrently*:
@@ -62,4 +69,7 @@ if __name__ == "__main__":
     duration = time.time() - start_time
     print(f"Called {len(params)} params in {duration} seconds") """
 
-    asyncio.run(runner(["scare"]))
+    start_time = time.time()
+    print(asyncio.run(runner(["czzzz"])))
+    duration = time.time() - start_time
+    print(f"Called in {duration} seconds")

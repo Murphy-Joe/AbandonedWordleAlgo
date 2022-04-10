@@ -95,7 +95,7 @@ class Solver():
                 continue
             else:
                 score += self.play_fake_guess(tgt, guess_word, targets_left)
-        return {guess_word: score/len(targets_left)}
+        return (guess_word, score/len(targets_left))
 
 
 if __name__ == '__main__':
