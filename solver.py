@@ -1,5 +1,6 @@
 import json
 from copy import deepcopy
+import time
 from game import WordleGame
 from words_filter import WordsFilter
 
@@ -74,27 +75,25 @@ class Solver():
             new_game.ResultsFilter, filtered_answers)
         return len(words_left)
 
-    def narrowing_scores(self, best_words: list[str], targets_left: list[str]) -> dict[str, int]:
-        return_dict = {}
+    def narrowing_scores(self, best_words: list[str], targets_left: list[str]) -> list[tuple[str, int]]:
+        collect_guess_scores = []
         best_words = [word.lower() for word in best_words]
-        for tgt in targets_left:
-            for guess in best_words:
-                return_dict.setdefault(guess, 0)
-                score = self.play_fake_guess(
-                    tgt, guess, targets_left) if guess != tgt else 0
-                return_dict[guess] += score
-        for word, score in return_dict.items():
-            return_dict[word] = score / len(targets_left)
-        return return_dict
+        for guess in best_words:
+            guess_score = self.narrowing_score_per_guess_async(guess, targets_left)
+            collect_guess_scores.append(guess_score)
+        return collect_guess_scores
 
-    def narrowing_score_per_guess_async(self, guess_word: str, targets_left: list[str]) -> dict[str, int]:
+    def narrowing_score_per_guess_async(self, guess_word: str, targets_left: list[str]) -> tuple[str, int]:
         guess_word = guess_word.lower()
         score = 0
+        start_time = time.time()
         for tgt in targets_left:
             if guess_word == tgt:
                 continue
             else:
                 score += self.play_fake_guess(tgt, guess_word, targets_left)
+        end_time = time.time()
+        print(guess_word, end_time - start_time)
         return (guess_word, score/len(targets_left))
 
 

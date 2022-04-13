@@ -1,3 +1,3 @@
-l = [(1, 2), (3, 4), (5, 6)]
-for k, v in l:
-    print(k, v)
+d = [{'zerr':2}, {'har':1}]
+d.sort(key=lambda kv: tuple(kv.items())[0][1])
+print(d)

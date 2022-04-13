@@ -1,5 +1,6 @@
 import asyncio
 import json
+from pprint import pprint
 import time
 import aiohttp
 
@@ -46,8 +47,8 @@ async def runner(guess_list: list[str]):
             task = asyncio.create_task(guess_score(guess_list, session, next_guess))
             tasks.append(task)
         res = await asyncio.gather(*tasks, return_exceptions=True)
-        res.sort(key=lambda x: x[1])
-        return res[0]
+        # res.sort(key=lambda tup: tup[1])
+        return res
 
 
 
@@ -70,6 +71,13 @@ if __name__ == "__main__":
     print(f"Called {len(params)} params in {duration} seconds") """
 
     start_time = time.time()
-    print(asyncio.run(runner(["czzzz"])))
+    results = asyncio.run(runner(["clrst"]))
     duration = time.time() - start_time
-    print(f"Called in {duration} seconds")
+    for result in results:
+        print()
+        print(result)
+
+    print(f"\nCalled in {duration} seconds")
+    # times = [x[1] for x in results]
+    # avg_process_time_per_guess = sum(times)/len(times)
+    # print(f"\nAvg process time: {avg_process_time_per_guess}")
