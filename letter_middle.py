@@ -106,8 +106,7 @@ def best_guess(wordle_game: WordleGame) -> str:
     brute_force_end = time()
     # print(f'\nbrute force time: {brute_force_end-brute_force_start}')
 
-    sorted_scores = dict(
-        sorted(scores_after_brute_force.items(), key=lambda w_s: w_s[1]))
+    scores_after_brute_force.sort(key=lambda tup: tup[1])
 
     cnt = 0
     # print(f'\nbest words after brute force out of {len(sorted_scores)}')
@@ -116,9 +115,9 @@ def best_guess(wordle_game: WordleGame) -> str:
     #     cnt += 1
     #     if cnt > 10:
     #         break
-    best_score = sorted_scores[list(sorted_scores.keys())[0]]
+    best_score = scores_after_brute_force[0][1]
     top_word_or_words = [
-        word for word in scores_after_brute_force if scores_after_brute_force[word] == best_score]
+        word_score[0] for word_score in scores_after_brute_force if word_score[1] == best_score]
 
     if len(top_word_or_words) == 1:
         return top_word_or_words[0]
@@ -141,9 +140,9 @@ if __name__ == '__main__':
     total_start = time()
     # print(random.choice(answers))
     game = WordleGame()
-    game.make_guess('roate')
-    # game.make_guess('liman')
-    # game.make_guess('coach')
+    game.make_guess('clrst')
+    # game.make_guess('haole')
+    # game.make_guess('black')
     # game.make_guess('fewer')
 
     remaining_answers = Solver(
