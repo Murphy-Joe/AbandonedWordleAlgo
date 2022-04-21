@@ -1,9 +1,6 @@
-import asyncio
-import json
-import time
 from typing import Optional
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from pydantic import BaseModel
 
 from game import WordleGame
