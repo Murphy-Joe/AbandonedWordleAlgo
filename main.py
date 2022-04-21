@@ -30,14 +30,15 @@ async def best_letters(body: Guesses):
     words_left = targets_left(body.guesses)
     return letters_sorted_by_middleness(words_left)
 
-@app.post("/wordsleft")
-async def root(body: Guesses):
+@app.post("/targetsleft")
+async def wordsleft(body: Guesses) -> list[str]:
+    return targets_left(body.guesses)
+
+@app.post("/bestguesses")
+async def best_guesses(body: Guesses) -> list[str]:
     wordsLeft = targets_left(body.guesses)
-    bestGuessWords = words_for_brute_force(wordsLeft)
-    return {
-        "wordsLeft": wordsLeft,
-        "bestGuessWords": bestGuessWords,
-    }
+    return words_for_brute_force(wordsLeft)
+
 
 @app.post("/game")
 async def single_guess_dict(body: Guesses):

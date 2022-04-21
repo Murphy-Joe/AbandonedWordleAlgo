@@ -125,6 +125,20 @@ def best_guess(wordle_game: WordleGame) -> str:
             word for word in top_word_or_words if word in words_left]
         return top_targets[0]
 
+def choose_best_guess(sorted_best_guesses: list[tuple[str, int]], words_left: list[str]) -> tuple[str, int]:
+    best_score = sorted_best_guesses[0][1]
+    top_item_or_items = [
+        word_score for word_score in sorted_best_guesses if word_score[1] == best_score]
+
+    if len(top_item_or_items) == 1:
+        return top_item_or_items[0]
+    elif not any(word in words_left for word in top_item_or_items):
+        return top_item_or_items[0]
+    else:
+        top_targets = [
+            word for word in top_item_or_items if word in words_left]
+        return top_targets[0]
+
 
 if __name__ == '__main__':
 

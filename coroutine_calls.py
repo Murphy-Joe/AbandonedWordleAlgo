@@ -2,6 +2,8 @@ import asyncio
 import time
 import aiohttp
 
+from letter_middle import choose_best_guess
+
 
 async def targets_and_guesses(guess_list, session):
     payload = {"guesses": guess_list}
@@ -15,7 +17,7 @@ async def guess_score(guess_list, session, next_guess):
         return await game_post.json()
         # print(guess_dict)
 
-async def runner(guess_list: list[str]):
+async def runner1(guess_list: list[str]):
     async with aiohttp.ClientSession("https://1vv6d7.deta.dev") as session:
         resp_targets_and_guesses = await targets_and_guesses(guess_list, session)
         print(f'\nnumber of guesses to check: {len(resp_targets_and_guesses["bestGuessWords"])}')
@@ -35,6 +37,40 @@ async def runner(guess_list: list[str]):
         # maybe best letters
         res.sort(key=lambda tup: tup[1])
         return res
+
+async def targets_left(guess_list, session) -> list[str]:
+    payload = {"guesses": guess_list}
+    async with session.post('/targetsleft', json=payload) as targets_left_post:
+        return await targets_left_post.json()
+
+async def best_guesses(guess_list: list[str], session) -> list[str]:
+    payload = {"guesses": guess_list}
+    async with session.post('/bestguesses', json=payload) as best_guesses_post:
+        return await best_guesses_post.json()
+
+async def best_letters(guess_list: list[str], session) -> dict[str, int]:
+    payload = {"guesses": guess_list}
+    async with session.post('/bestletters', json=payload) as best_letters_post:
+        return await best_letters_post.json()
+
+async def runner(guess_list: list[str]):
+    async with aiohttp.ClientSession("https://1vv6d7.deta.dev") as session:
+        resp_best_guesses = await best_guesses(guess_list, session)
+        resp_best_letters = await best_letters(guess_list, session)
+        resp_targets = await targets_left(guess_list, session)
+    
+        tasks = []
+        for next_guess in resp_best_guesses:
+            task = asyncio.create_task(guess_score(guess_list, session, next_guess))
+            tasks.append(task)
+        res = await asyncio.gather(*tasks, return_exceptions=True)
+        res.sort(key=lambda tup: tup[1])
+        best_guess = choose_best_guess(res, resp_targets)
+        return {
+            "targets_left_list": resp_targets,
+            "best_letters_dict": resp_best_letters,
+            "best_guess_w_score_tup": best_guess,
+        }
 
 if __name__ == "__main__":
 
