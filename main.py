@@ -5,10 +5,10 @@ from typing import Optional
 
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
-# import aiohttp
 
 from game import WordleGame
 from letter_middle import words_for_brute_force, letters_sorted_by_middleness
+from coroutine_calls import runner
 from solver import Solver
 
 # pylint: disable=invalid-name
@@ -18,12 +18,21 @@ class Guesses(BaseModel):
     guesses: list[str]
     next_guess: Optional[str]
 
+class AllInOneResponse(BaseModel):
+    targets_left_len: int
+    best_letters_dict: dict[str, int]
+    best_guess_w_score_tup: tuple[str, int]
+
 def targets_left(guesses: list[str]) -> list[str]:
     game = WordleGame()
     for guess in guesses:
         game.make_guess(guess)
     solver = Solver(game)
     return solver.answers_that_meet_criteria(game.ResultsFilter)
+
+@app.post("/onecall", response_model=AllInOneResponse)
+async def onecall(body: Guesses):
+    return await runner(body.guesses)
 
 @app.post("/bestletters")
 async def best_letters(body: Guesses):

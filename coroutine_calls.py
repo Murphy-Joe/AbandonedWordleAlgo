@@ -67,7 +67,7 @@ async def runner(guess_list: list[str]):
         res.sort(key=lambda tup: tup[1])
         best_guess = choose_best_guess(res, resp_targets)
         return {
-            "targets_left_list": resp_targets,
+            "targets_left_len": len(resp_targets),
             "best_letters_dict": resp_best_letters,
             "best_guess_w_score_tup": best_guess,
         }
