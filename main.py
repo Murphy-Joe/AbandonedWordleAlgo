@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from game import WordleGame
@@ -10,6 +11,16 @@ from solver import Solver
 
 # pylint: disable=invalid-name
 app = FastAPI()
+origins = [
+    "https://www.nytimes.com",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["POST"],
+    allow_headers=["*"],
+)
 
 class Guesses(BaseModel):
     guesses: list[str]
