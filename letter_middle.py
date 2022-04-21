@@ -68,10 +68,7 @@ def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list
     return sorted_word_scores
 
 
-def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
-    words_left = Solver(wordle_game).answers_that_meet_criteria(
-        wordle_game.ResultsFilter)
-
+def words_for_brute_force(words_left: list[str]) -> list[str]:
     playable_guesses_w_upper = words_sorted_by_middleness_w_upper(
         words_left, playable_words)
 
@@ -98,7 +95,7 @@ def words_for_brute_force(wordle_game: WordleGame) -> list[str]:
 def best_guess(wordle_game: WordleGame) -> str:
     solver = Solver(wordle_game)
     words_left = solver.answers_that_meet_criteria(wordle_game.ResultsFilter)
-    best_guesses = words_for_brute_force(wordle_game)
+    best_guesses = words_for_brute_force(words_left)
 
     brute_force_start = time()
     scores_after_brute_force = solver.narrowing_scores(

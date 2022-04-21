@@ -5,9 +5,10 @@ from typing import Optional
 
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
+import aiohttp
 
 from game import WordleGame
-from letter_middle import words_for_brute_force
+from letter_middle import words_for_brute_force, letters_sorted_by_middleness
 from solver import Solver
 
 # pylint: disable=invalid-name
@@ -17,14 +18,21 @@ class Guesses(BaseModel):
     guesses: list[str]
     next_guess: Optional[str]
 
-@app.post("/wordsleft")
-async def root(body: Guesses):
+def targets_left(guesses: list[str]) -> list[str]:
     game = WordleGame()
-    for guess in body.guesses:
+    for guess in guesses:
         game.make_guess(guess)
     solver = Solver(game)
-    wordsLeft = solver.answers_that_meet_criteria(game.ResultsFilter)
-    bestGuessWords = words_for_brute_force(game)
+    return solver.answers_that_meet_criteria(game.ResultsFilter)
+
+@app.post("/bestletters")
+async def best_letters(body: Guesses):
+    words_left = targets_left(body.guesses)
+
+@app.post("/wordsleft")
+async def root(body: Guesses):
+    wordsLeft = targets_left(body.guesses)
+    bestGuessWords = words_for_brute_force(wordsLeft)
     return {
         "wordsLeft": wordsLeft,
         "bestGuessWords": bestGuessWords,
@@ -46,29 +54,8 @@ async def get_guess_dict(guesses: str = Query(str), nextguess: str = Query(str))
 
 @app.post("/game")
 async def single_guess_dict(body: Guesses):
-    # create_game = time.time()
-    game = WordleGame()
-    # end_create_game = time.time()
-
-    # make_guess = time.time()
-    for guess in body.guesses:
-        game.make_guess(guess)
-    # end_make_guess = time.time()
-
-    # create_solver = time.time()
-    solver = Solver(game)
-    # end_create_solver = time.time()
-
-    # words_left_time = time.time()
-    words_left = solver.answers_that_meet_criteria(game.ResultsFilter)
-    # end_words_left = time.time()
-
-    # narrowing_scores = time.time()
-    guess_dict = solver.narrowing_score_per_guess_async(body.next_guess, words_left)
-    # end_narrowing_scores = time.time()
-
-    # return {"create_game": end_create_game - create_game, "make_guess": end_make_guess - make_guess, "create_solver": end_create_solver - create_solver, "words_left": end_words_left - words_left_time, "narrowing_scores": end_narrowing_scores - narrowing_scores, "guess_dict": guess_dict}
-    return guess_dict
+    words_left = targets_left(body.guesses)
+    return Solver().narrowing_score_per_guess_async(body.next_guess, words_left)
 
 if __name__ == "__main__":
     import uvicorn

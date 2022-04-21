@@ -10,8 +10,8 @@ with open('words/playable_words.json', 'r') as playable_words:
 
 
 class Solver():
-    def __init__(self, game: WordleGame):
-        self.Game = deepcopy(game)
+    def __init__(self, game: WordleGame = None):
+        self.Game = deepcopy(game) if game else WordleGame()
 
     # region filter criteria sub-functions
     def matches_exact_letters(self, word: str) -> bool:

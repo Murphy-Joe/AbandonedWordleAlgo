@@ -28,6 +28,11 @@ async def runner(guess_list: list[str]):
             task = asyncio.create_task(guess_score(guess_list, session, next_guess))
             tasks.append(task)
         res = await asyncio.gather(*tasks, return_exceptions=True)
+        # want
+        # targets left (and len)
+        # best overall guess (and score)
+        # best guess from targets (and score)
+        # maybe best letters
         res.sort(key=lambda tup: tup[1])
         return res
 
