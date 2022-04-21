@@ -28,15 +28,16 @@ async def runner(guess_list: list[str]):
             task = asyncio.create_task(guess_score(guess_list, session, next_guess))
             tasks.append(task)
         res = await asyncio.gather(*tasks, return_exceptions=True)
-        # res.sort(key=lambda tup: tup[1])
+        res.sort(key=lambda tup: tup[1])
         return res
 
 if __name__ == "__main__":
 
     start_time = time.time()
-    results = asyncio.run(runner(["crane"]))
+    results = asyncio.run(runner(["roate"]))
     duration = time.time() - start_time
-    avgNarrowingScore = sum([r["narrowing_scores"] for r in results]) / len(results)
-    print(f"\nheavy narrowing score loop took {avgNarrowingScore} seconds")
+    # avgNarrowingScore = sum([r["narrowing_scores"] for r in results]) / len(results)
+    # print(f"\nheavy narrowing score loop took {avgNarrowingScore} seconds")
+    print(results)
 
     print(f"\nCalled in {duration} seconds")
