@@ -2,7 +2,7 @@ import asyncio
 import time
 import aiohttp
 
-from letter_middle import choose_best_guess
+from letter_middle import choose_best_guess, words_for_brute_force
 
 async def targets_and_guesses(guess_list, session):
     payload = {"guesses": guess_list}
@@ -42,10 +42,10 @@ async def targets_left(guess_list, session) -> list[str]:
     async with session.post('/targetsleft', json=payload) as targets_left_post:
         return await targets_left_post.json()
 
-async def best_guesses(guess_list: list[str], session) -> list[str]:
-    payload = {"guesses": guess_list}
-    async with session.post('/bestguesses', json=payload) as best_guesses_post:
-        return await best_guesses_post.json()
+# async def guesses_to_run(guess_list: list[str], session) -> list[str]:
+#     payload = {"guesses": guess_list}
+#     async with session.post('/guessestorun', json=payload) as best_guesses_post:
+#         return await best_guesses_post.json()
 
 async def best_letters(guess_list: list[str], session) -> dict[str, int]:
     payload = {"guesses": guess_list}
@@ -54,10 +54,10 @@ async def best_letters(guess_list: list[str], session) -> dict[str, int]:
 
 async def runner(guess_list: list[str], words_left: list[str]) -> list[tuple[str, int]]:
     async with aiohttp.ClientSession("https://1vv6d7.deta.dev") as session:
-        resp_best_guesses = await best_guesses(guess_list, session)
+        guesses_to_run = words_for_brute_force(words_left)
         
         tasks = []
-        for next_guess in resp_best_guesses:
+        for next_guess in guesses_to_run:
             task = asyncio.create_task(guess_score(guess_list, session, next_guess))
             tasks.append(task)
         res = await asyncio.gather(*tasks, return_exceptions=True)
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     from game import WordleGame
     from solver import Solver
 
-    guesses = ["basks", "tench"]
+    guesses = ["basks"]
 
     game = WordleGame()
     for guess in guesses:
