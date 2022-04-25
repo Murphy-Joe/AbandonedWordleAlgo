@@ -27,10 +27,9 @@ class Guesses(BaseModel):
     guesses: list[str]
     next_guess: Optional[str]
 
-class AllInOneResponse(BaseModel):
-    targets_left_len: int
-    best_letters_dict: dict[str, int]
-    best_guess_w_score_tup: tuple[str, int]
+class TargetsLeftResponse(BaseModel):
+    count: int
+    targets: list[str]
 
 def targets_left(guesses: list[str]) -> list[str]:
     game = WordleGame()
@@ -39,7 +38,7 @@ def targets_left(guesses: list[str]) -> list[str]:
     solver = Solver(game)
     return solver.answers_that_meet_criteria(game.ResultsFilter)
 
-@app.post("/onecall", response_model=AllInOneResponse)
+@app.post("/onecall")
 async def onecall(body: Guesses):
     words_left = targets_left(body.guesses)
     return await runner(body.guesses, words_left)
@@ -49,11 +48,12 @@ async def best_letters(body: Guesses):
     words_left = targets_left(body.guesses)
     return letters_sorted_by_middleness(words_left)
 
-@app.post("/targetsleft")
+@app.post("/targetsleft", response_model=TargetsLeftResponse)
 async def wordsleft(body: Guesses) -> list[str]:
-    return targets_left(body.guesses)
+    targets = targets_left(body.guesses)
+    return TargetsLeftResponse(count=len(targets), targets=targets[:10])
 
-@app.post("/bestguesses")
+@app.post("/guessestorun")
 async def best_guesses(body: Guesses) -> list[str]:
     wordsLeft = targets_left(body.guesses)
     return words_for_brute_force(wordsLeft)
