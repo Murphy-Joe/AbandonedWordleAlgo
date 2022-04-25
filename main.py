@@ -32,6 +32,7 @@ class TargetsLeftResponse(BaseModel):
     targets: list[str]
 
 def targets_left(guesses: list[str]) -> list[str]:
+    guesses = [word for word in guesses if word]
     game = WordleGame()
     for guess in guesses:
         game.make_guess(guess)
@@ -51,7 +52,7 @@ async def best_letters(body: Guesses):
 @app.post("/targetsleft", response_model=TargetsLeftResponse)
 async def wordsleft(body: Guesses) -> list[str]:
     targets = targets_left(body.guesses)
-    return TargetsLeftResponse(count=len(targets), targets=targets[:10])
+    return TargetsLeftResponse(count=len(targets), targets=targets[:30])
 
 @app.post("/guessestorun")
 async def best_guesses(body: Guesses) -> list[str]:
