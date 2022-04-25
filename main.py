@@ -41,7 +41,8 @@ def targets_left(guesses: list[str]) -> list[str]:
 
 @app.post("/onecall", response_model=AllInOneResponse)
 async def onecall(body: Guesses):
-    return await runner(body.guesses)
+    words_left = targets_left(body.guesses)
+    return await runner(body.guesses, words_left)
 
 @app.post("/bestletters")
 async def best_letters(body: Guesses):

@@ -4,7 +4,6 @@ import aiohttp
 
 from letter_middle import choose_best_guess
 
-
 async def targets_and_guesses(guess_list, session):
     payload = {"guesses": guess_list}
     async with session.post('/wordsleft', json=payload) as words_post:
@@ -53,29 +52,37 @@ async def best_letters(guess_list: list[str], session) -> dict[str, int]:
     async with session.post('/bestletters', json=payload) as best_letters_post:
         return await best_letters_post.json()
 
-async def runner(guess_list: list[str]):
+async def runner(guess_list: list[str], words_left: list[str]) -> list[tuple[str, int]]:
     async with aiohttp.ClientSession("https://1vv6d7.deta.dev") as session:
         resp_best_guesses = await best_guesses(guess_list, session)
-        resp_best_letters = await best_letters(guess_list, session)
-        resp_targets = await targets_left(guess_list, session)
-    
+        
         tasks = []
         for next_guess in resp_best_guesses:
             task = asyncio.create_task(guess_score(guess_list, session, next_guess))
             tasks.append(task)
         res = await asyncio.gather(*tasks, return_exceptions=True)
+
         res.sort(key=lambda tup: tup[1])
-        best_guess = choose_best_guess(res, resp_targets)
-        return {
-            "targets_left_len": len(resp_targets),
-            "best_letters_dict": resp_best_letters,
-            "best_guess_w_score_tup": best_guess,
-        }
+        best_guess = choose_best_guess(res, words_left)
+        res.remove(best_guess)
+        res.insert(0, best_guess)
+
+        return res
 
 if __name__ == "__main__":
+    from game import WordleGame
+    from solver import Solver
+
+    guesses = ["basks", "tench"]
+
+    game = WordleGame()
+    for guess in guesses:
+        game.make_guess(guess)
+    solver = Solver(game)
+    word_left_param = solver.answers_that_meet_criteria(game.ResultsFilter)
 
     start_time = time.time()
-    results = asyncio.run(runner(["roate"]))
+    results = asyncio.run(runner(guesses, word_left_param))
     duration = time.time() - start_time
     # avgNarrowingScore = sum([r["narrowing_scores"] for r in results]) / len(results)
     # print(f"\nheavy narrowing score loop took {avgNarrowingScore} seconds")
