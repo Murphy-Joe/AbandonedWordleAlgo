@@ -1,3 +1,5 @@
-d = [{'zerr':2}, {'har':1}]
-d.sort(key=lambda kv: tuple(kv.items())[0][1])
-print(d)
+import pytz
+from datetime import datetime
+utc_current_datetime = datetime.now(pytz.timezone("EST"))
+print(utc_current_datetime.hour)
+

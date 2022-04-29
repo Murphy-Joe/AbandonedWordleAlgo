@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import uvloop
 
 from game import WordleGame
 from letter_middle import words_for_brute_force, letters_sorted_by_middleness
@@ -42,6 +43,7 @@ def targets_left(guesses: list[str]) -> list[str]:
 @app.post("/onecall")
 async def onecall(body: Guesses):
     words_left = targets_left(body.guesses)
+    uvloop.install()
     return await runner(body.guesses, words_left)
 
 @app.post("/bestletters")

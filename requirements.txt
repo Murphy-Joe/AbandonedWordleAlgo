@@ -1,3 +1,5 @@
 fastapi
 pydantic
 aiohttp
+uvloop
+pytz
