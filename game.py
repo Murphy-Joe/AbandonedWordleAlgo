@@ -1,6 +1,8 @@
+import datetime
 import json
-from datetime import date
+from datetime import datetime, date, timedelta
 from words_filter import WordsFilter
+import pytz
 
 
 class WordleGame:
@@ -20,6 +22,8 @@ class WordleGame:
     def get_todays_target(self) -> str:
         beginning = date(year=2021, month=6, day=19)
         today = date.today()
+        if datetime.now(pytz.timezone("EST")).hour >= 20:
+            today = today - timedelta(days=1)
         time_delta = today - beginning
         answers_idx = time_delta.days
         return answers_idx
