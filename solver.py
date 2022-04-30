@@ -26,6 +26,8 @@ class Solver():
 
     def includes_included_letters(self, word: str) -> bool:
         all_included_letters_accounted_for = False
+        for idx_ltr in self.Game.ResultsFilter.IndexedLetters.values():
+            word = word.replace(idx_ltr, '', 1)
 
         for letter in self.Game.ResultsFilter.IncludedLetters:
             if letter not in word:
