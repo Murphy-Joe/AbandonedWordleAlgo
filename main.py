@@ -6,7 +6,7 @@ from pydantic import BaseModel
 import uvloop
 
 from game import WordleGame
-from letter_middle import words_for_brute_force, letters_sorted_by_middleness
+from letter_middle import words_for_brute_force, letters_sorted_by_middleness_for_api
 from coroutine_calls import runner
 from solver import Solver
 
@@ -49,7 +49,9 @@ async def onecall(body: Guesses):
 @app.post("/bestletters")
 async def best_letters(body: Guesses):
     words_left = targets_left(body.guesses)
-    return letters_sorted_by_middleness(words_left)
+    return letters_sorted_by_middleness_for_api(words_left)
+
+
 
 @app.post("/targetsleft", response_model=TargetsLeftResponse)
 async def wordsleft(body: Guesses) -> list[str]:

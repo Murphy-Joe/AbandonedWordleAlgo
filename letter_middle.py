@@ -28,8 +28,7 @@ def convert_uppercase_to_double_letter(results: dict[str, int]) -> dict[str, int
             formattedDict[k.upper()] = results[k]
     return formattedDict
 
-
-def letters_sorted_by_middleness(word_list: list[str]) -> dict[str, int]:
+def letter_frequency(word_list: list[str]) -> dict[str, int]:
     freq_results = {}
     word_list = [make_second_appearance_of_letter_uppercase(
         word) for word in word_list]
@@ -37,13 +36,17 @@ def letters_sorted_by_middleness(word_list: list[str]) -> dict[str, int]:
         for ltr in set(word):
             freq_results.setdefault(ltr, 0)
             freq_results[ltr] += 1
+    return freq_results
+
+def letters_sorted_by_middleness_for_algo(word_list: list[str]) -> dict[str, int]:
+    freq_results = letter_frequency(word_list)
 
     for ltr, freq in freq_results.items():
-        # freq_results[ltr] = abs(freq - len(word_list)/2)
-        freq_results[ltr] = round(freq/len(word_list)*100)
+        freq_results[ltr] = abs(freq - len(word_list)/2)
+        # freq_results[ltr] = round(freq/len(word_list)*100)
 
     sorted_freq_results = dict(sorted(freq_results.items(),
-                                      key=lambda ltr_frq: ltr_frq[1], reverse=True))
+                                      key=lambda ltr_frq: ltr_frq[1]))
 
     # print(f'\nletter freq scores')
     # cnt = 0
@@ -53,11 +56,22 @@ def letters_sorted_by_middleness(word_list: list[str]) -> dict[str, int]:
     #     if cnt > 10:
     #         break
 
-    return convert_uppercase_to_double_letter(sorted_freq_results)
+    return sorted_freq_results
+
+def letters_sorted_by_middleness_for_api(word_list: list[str]) -> dict[str, int]:
+    freq_results = letter_frequency(word_list)
+
+    for ltr, freq in freq_results.items():
+        freq_results[ltr] = round(freq/len(word_list)*100)
+
+    sorted_freq_results = dict(sorted(freq_results.items(),
+                                      key=lambda ltr_frq: ltr_frq[1], reverse=True))
+
+    return sorted_freq_results
 
 
 def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list[str]) -> list[tuple[str, int]]:
-    letter_scores = letters_sorted_by_middleness(targets_left)
+    letter_scores = letters_sorted_by_middleness_for_algo(targets_left)
     guess_list = [make_second_appearance_of_letter_uppercase(
         word) for word in guess_list]
     word_scores = {}
