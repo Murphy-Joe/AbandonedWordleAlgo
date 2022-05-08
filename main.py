@@ -1,4 +1,5 @@
 from typing import Optional
+import json
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,14 +28,15 @@ app.add_middleware(
 class Guesses(BaseModel):
     guesses: list[str]
     next_guess: Optional[str]
+    target: Optional[str]
 
 class TargetsLeftResponse(BaseModel):
     count: int
     targets: list[str]
 
-def targets_left(guesses: list[str]) -> list[str]:
+def targets_left(guesses: list[str], target: str = None) -> list[str]:
     guesses = [word for word in guesses if word]
-    game = WordleGame()
+    game = WordleGame() if not target else WordleGame(target)
     for guess in guesses:
         game.make_guess(guess)
     solver = Solver(game)
@@ -42,7 +44,11 @@ def targets_left(guesses: list[str]) -> list[str]:
 
 @app.post("/onecall")
 async def onecall(body: Guesses):
-    words_left = targets_left(body.guesses)
+    words_left = targets_left(body.guesses, body.target)
+    if not body.guesses or len(words_left) > 500:
+        with open ("words/starting_words.json", "r") as f:
+            starting_words = json.load(f)
+        return starting_words
     uvloop.install()
     return await runner(body.guesses, words_left)
 

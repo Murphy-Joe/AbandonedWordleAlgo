@@ -28,8 +28,9 @@ class Solver():
         all_included_letters_accounted_for = False
         for idx_ltr in self.Game.ResultsFilter.IndexedLetters.values():
             word = word.replace(idx_ltr, '', 1)
+        # letters_to_check = self.Game.ResultsFilter.IncludedLetters + list(self.Game.ResultsFilter.IndexedLetters.values())
 
-        for letter in self.Game.ResultsFilter.IncludedLetters:
+        for letter in self.Game.ResultsFilter.IncludedLetters: #letters_to_check:
             if letter not in word:
                 all_included_letters_accounted_for = False
                 break
@@ -88,14 +89,14 @@ class Solver():
     def narrowing_score_per_guess_async(self, guess_word: str, targets_left: list[str]) -> tuple[str, int]:
         guess_word = guess_word.lower()
         score = 0
-        start_time = time.time()
+        # start_time = time.time()
         for tgt in targets_left:
             if guess_word == tgt:
                 continue
             else:
                 score += self.play_fake_guess(tgt, guess_word, targets_left)
-        end_time = time.time()
-        print(guess_word, end_time - start_time)
+        # end_time = time.time()
+        # print(guess_word, end_time - start_time)
         return (guess_word, score/len(targets_left))
 
 

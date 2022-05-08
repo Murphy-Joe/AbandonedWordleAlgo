@@ -70,12 +70,12 @@ def letters_sorted_by_middleness_for_api(word_list: list[str]) -> dict[str, int]
     return sorted_freq_results
 
 
-def words_sorted_by_middleness_w_upper(targets_left: list[str], guess_list: list[str]) -> list[tuple[str, int]]:
+def words_sorted_by_middleness_w_upper(targets_left: list[str], available_words: list[str]) -> list[tuple[str, int]]:
     letter_scores = letters_sorted_by_middleness_for_algo(targets_left)
-    guess_list = [make_second_appearance_of_letter_uppercase(
-        word) for word in guess_list]
+    available_words = [make_second_appearance_of_letter_uppercase(
+        word) for word in available_words]
     word_scores = {}
-    for word in guess_list:
+    for word in available_words:
         word_scores.setdefault(word, 0)
         for ltr in word:
             try:

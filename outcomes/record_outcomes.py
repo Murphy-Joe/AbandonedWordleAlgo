@@ -18,11 +18,10 @@ with open('words/targets.json', 'r') as answers_json:
 starting_word = 'roate'
 
 cnt = 0
-while cnt < 200:
+while cnt < 2:
     cnt += 1
     random_target = random.choice(answers)
     game = WordleGame(answers[cnt])
-    cnt += 1
     game.make_guess(starting_word)
 
     while game.Target != game.Guesses[-1]:
@@ -31,9 +30,9 @@ while cnt < 200:
         next_guess = best_guess(game)
         game.make_guess(next_guess)
 
-    with open(f'outcomes/{starting_word}2.json', 'r') as file_read:
+    with open(f'outcomes/{starting_word}3.json', 'r') as file_read:
         file_obj = json.load(file_read)
         file_obj.update({game.Target: len(game.Guesses)})
 
-    with open(f'outcomes/{starting_word}2.json', 'w') as file_write:
+    with open(f'outcomes/{starting_word}3.json', 'w') as file_write:
         json.dump(file_obj, file_write)
